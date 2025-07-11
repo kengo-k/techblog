@@ -45,7 +45,7 @@
         {{ end }}
         {{ $mSorted := sort $mKeys }}
         <div class="flex items-center flex-wrap text-sm py-1 border-b border-gray-100 last:border-b-0">
-          <span class="font-medium text-gray-900 mr-4">{{ $yr }}年</span>
+          <span class="font-medium text-gray-900 mr-4">{{ cond (eq $.Site.Language.Lang "en") $yr (print $yr "年") }}</span>
           {{ range $mSorted }}
             {{ $pgs := index $monthsDict . }}
             {{ $sample := index $pgs 0 }}
