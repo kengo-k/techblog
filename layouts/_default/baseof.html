@@ -9,6 +9,8 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    {{ partial "extend_head.html" . }}
+
     <!-- Custom CSS -->
     <style>
         .line-clamp-2 {
@@ -109,7 +111,7 @@
         </a>
 
         <div class="text-center">
-          <h1 class="text-3xl font-light text-gray-900 mb-2">
+          <h1 class="labrada-regular text-3xl font-light text-gray-900 mb-2">
             <a href="{{ "/" | relLangURL }}" class="hover:text-gray-600 transition-colors">
               {{ .Site.Title }}
             </a>
