@@ -1,0 +1,18 @@
+- id: tags_heading
+  translation: "Tags"
+- id: archives_heading
+  translation: "Archives"
+- id: view_all_tags
+  translation: "View all tags"
+- id: view_all_archives
+  translation: "View all archives"
+- id: archive_list_title
+  translation: "Archive"
+- id: tag_list_title
+  translation: "Tags"
+- id: post_count
+  translation:
+    one: "{{ .Count }} post"
+    other: "{{ .Count }} posts"
+- id: back_home
+  translation: "← Back to Home"

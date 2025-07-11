@@ -11,15 +11,15 @@
       <!-- Article Header -->
       <header class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ .Title }}</h1>
-        
+
         <div class="flex justify-between items-center text-sm text-gray-500 mb-4">
-          <time>{{ .Date.Format "2006年1月2日" }}</time>
+          <time>{{ cond (eq $.Site.Language.Lang "en") (.Date.Format "January 2, 2006") (.Date.Format "2006年1月2日") }}</time>
           <div class="flex items-center space-x-4">
             <span>{{ .ReadingTime }}分で読めます</span>
             <span>{{ .WordCount }}文字</span>
           </div>
         </div>
-        
+
         <!-- Tags -->
         <div class="flex flex-wrap gap-2">
           {{ range .Params.tags }}
@@ -43,14 +43,14 @@
         ← {{ .PrevInSection.Title }}
       </a>
       {{ end }}
-      
+
       {{ if .NextInSection }}
       <a href="{{ .NextInSection.Permalink }}" class="text-blue-600 hover:text-blue-800">
         {{ .NextInSection.Title }} →
       </a>
       {{ end }}
     </div>
-    
+
     <!-- Back to Home -->
     <div class="text-center mt-8">
       <a href="{{ .Site.BaseURL }}" class="text-gray-600 hover:text-gray-800">

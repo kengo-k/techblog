@@ -1,0 +1,16 @@
+- id: tags_heading
+  translation: "タグ"
+- id: archives_heading
+  translation: "アーカイブ"
+- id: view_all_tags
+  translation: "全てのタグを見る"
+- id: view_all_archives
+  translation: "全てのアーカイブを見る"
+- id: archive_list_title
+  translation: "アーカイブ一覧"
+- id: tag_list_title
+  translation: "タグ一覧"
+- id: post_count
+  translation: "{{ .Count }}件の記事"
+- id: back_home
+  translation: "← ホームへ戻る"

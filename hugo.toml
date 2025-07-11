@@ -2,6 +2,20 @@ baseURL = 'https://example.org/'
 languageCode = 'ja'
 title = 'Tech Blog'
 theme = 'PaperMod'
+defaultContentLanguage = "ja"
+defaultContentLanguageInSubdir = false
+
+[languages]
+  [languages.ja]
+    weight = 1
+    languageName = '日本語'
+    contentDir = 'content/ja'
+
+  [languages.en]
+    weight = 2
+    languageName = 'English'
+    contentDir = 'content/en'
+
 [pagination]
 pagerSize = 5
 enableEmoji = true

@@ -39,7 +39,7 @@
                 {{ $partialDate := (partial "extract-date.html" . | plainify | printf "%s") }}
                 {{ $dateStr := (cond (ne $partialDate "") $partialDate (.Date.Format "2006-01-02")) }}
                 {{ $postDate := time $dateStr }}
-                <span>{{ $postDate.Format "2006年1月2日" }}</span>
+                <span>{{ cond (eq $.Site.Language.Lang "en") ($postDate.Format "January 2, 2006") ($postDate.Format "2006年1月2日") }}</span>
               </div>
             </div>
           </div>
@@ -83,7 +83,7 @@
 
           <!-- Tag List -->
           <div>
-            <h3 class="text-sm font-medium text-gray-900 mb-4">タグ</h3>
+            <h3 class="text-sm font-medium text-gray-900 mb-4">{{ i18n "tags_heading" }}</h3>
             <div class="flex flex-wrap gap-2 mb-2">
               {{ range .Site.Taxonomies.tags.ByCount }}
               <a href="{{ .Page.Permalink }}" class="px-2 py-1 bg-gray-100 rounded text-xs text-gray-700 hover:bg-gray-200">
@@ -92,13 +92,13 @@
               {{ end }}
             </div>
             <div class="text-right">
-              <a href="/tags/" class="text-sm text-gray-500 hover:text-gray-700">全てのタグを見る</a>
+              <a href="{{ "/tags/" | relLangURL }}" class="text-sm text-gray-500 hover:text-gray-700">{{ i18n "view_all_tags" }}</a>
             </div>
           </div>
 
           <!-- Archive List -->
           <div>
-            <h3 class="text-sm font-medium text-gray-900 mb-4">アーカイブ</h3>
+            <h3 class="text-sm font-medium text-gray-900 mb-4">{{ i18n "archives_heading" }}</h3>
             <div class="space-y-1">
               {{/* Custom archive generation using path-based dates */}}
               {{ $monthMap := dict }}
@@ -123,16 +123,16 @@
                 {{ $partialDate := (partial "extract-date.html" $firstPage | plainify | printf "%s") }}
                 {{ $dateStr := (cond (ne $partialDate "") $partialDate ($firstPage.Date.Format "2006-01-02")) }}
                 {{ $parsedDate := time $dateStr }}
-                {{ $displayDate := $parsedDate.Format "2006年1月" }}
+                {{ $displayDate := cond (eq $.Site.Language.Lang "en") ($parsedDate.Format "January 2006") ($parsedDate.Format "2006年1月") }}
                 <div class="flex items-center justify-between py-1 text-left text-sm hover:text-gray-600">
-                  <a href="/months/{{ $monthKey }}/" class="text-gray-700 hover:text-gray-600">
+                  <a href="{{ (print "/months/" $monthKey "/") | relLangURL }}" class="text-gray-700 hover:text-gray-600">
                     {{ $displayDate }}
                   </a>
                   <span class="text-gray-500 text-xs">({{ len $pages }})</span>
                 </div>
               {{ end }}
               <div class="text-right mt-2">
-                <a href="/archives/" class="text-sm text-gray-500 hover:text-gray-700">全てのアーカイブを見る</a>
+                <a href="{{ "/archives/" | relLangURL }}" class="text-sm text-gray-500 hover:text-gray-700">{{ i18n "view_all_archives" }}</a>
               </div>
             </div>
           </div>

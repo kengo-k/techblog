@@ -2,9 +2,9 @@
 <div class="min-h-screen bg-white">
   <div class="container mx-auto px-4 py-12">
     <div class="mb-4">
-      <a href="/" class="text-sm text-gray-500 hover:text-gray-700">← ホームへ戻る</a>
+      <a href="{{ "/" | relLangURL }}" class="text-sm text-gray-500 hover:text-gray-700">{{ i18n "back_home" }}</a>
     </div>
-    <h1 class="text-2xl font-medium text-gray-900 mb-8">アーカイブ一覧</h1>
+    <h1 class="text-2xl font-medium text-gray-900 mb-8">{{ i18n "archive_list_title" }}</h1>
 
     {{/* 全記事から年月別マップを生成 */}}
     {{ $monthMap := dict }}
@@ -34,8 +34,8 @@
         {{ $ds := (cond (ne $rd "") $rd ($sample.Date.Format "2006-01-02")) }}
         {{ $pd := time $ds }}
         <div class="flex items-center justify-between py-1 text-left text-sm hover:text-gray-600">
-          <a href="/months/{{ $m }}/" class="text-gray-700 hover:text-gray-600">
-            {{ $pd.Format "2006年1月" }}
+          <a href="{{ (print "/months/" $m "/") | relLangURL }}" class="text-gray-700 hover:text-gray-600">
+            {{ cond (eq $.Site.Language.Lang "en") ($pd.Format "January 2006") ($pd.Format "2006年1月") }}
           </a>
           <span class="text-gray-500 text-xs">({{ len $pages }})</span>
         </div>

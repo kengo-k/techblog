@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
     <meta name="description" content="{{ block "description" . }}{{ .Site.Params.description }}{{ end }}">
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Custom CSS -->
     <style>
         .line-clamp-2 {
@@ -17,23 +17,23 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
-        
+
         body {
             font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
             background-color: #ffffff;
         }
-        
+
         .prose {
             max-width: none;
         }
-        
+
         .prose h1 {
             font-size: 2rem;
             font-weight: 700;
             color: #111827;
             margin-bottom: 1rem;
         }
-        
+
         .prose h2 {
             font-size: 1.5rem;
             font-weight: 600;
@@ -41,7 +41,7 @@
             margin-top: 2rem;
             margin-bottom: 1rem;
         }
-        
+
         .prose h3 {
             font-size: 1.25rem;
             font-weight: 600;
@@ -49,13 +49,13 @@
             margin-top: 1.5rem;
             margin-bottom: 0.75rem;
         }
-        
+
         .prose p {
             margin-bottom: 1rem;
             line-height: 1.75;
             color: #374151;
         }
-        
+
         .prose code {
             background-color: #f3f4f6;
             padding: 0.125rem 0.25rem;
@@ -63,7 +63,7 @@
             font-size: 0.875rem;
             color: #ef4444;
         }
-        
+
         .prose pre {
             background-color: #1f2937;
             color: #f9fafb;
@@ -72,22 +72,22 @@
             overflow-x: auto;
             margin: 1rem 0;
         }
-        
+
         .prose pre code {
             background-color: transparent;
             color: inherit;
             padding: 0;
         }
-        
+
         .prose ul, .prose ol {
             margin: 1rem 0;
             padding-left: 1.5rem;
         }
-        
+
         .prose li {
             margin-bottom: 0.5rem;
         }
-        
+
         .container {
             max-width: 1200px;
         }
@@ -96,11 +96,24 @@
 <body class="bg-white">
     <!-- Header -->
     <header class="bg-white border-b border-gray-200">
-      <div class="container mx-auto px-4 py-12">
+      <div class="container mx-auto px-4 py-12 relative">
+        <!-- Language Switcher Icon -->
+        <a href="{{ if eq .Site.Language.Lang "ja" }}{{ "/en/" | relURL }}{{ else }}{{ "/" | relURL }}{{ end }}"
+           class="absolute top-16 right-8 text-gray-500 hover:text-gray-700" aria-label="Switch language">
+          <!-- Globe SVG -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c4.97 0 9 4.03 9 9s-4.03 9-9 9-9-4.03-9-9 4.03-9 9-9z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.5 2 4 5.5 4 9s-1.5 7-4 9c-2.5-2-4-5.5-4-9s1.5-7 4-9z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18" />
+          </svg>
+        </a>
+
         <div class="text-center">
-          <a href="/" class="block">
-            <h1 class="text-3xl font-light text-gray-900 mb-2 cursor-pointer hover:text-gray-600 transition-colors">{{ .Site.Title }}</h1>
-          </a>
+          <h1 class="text-3xl font-light text-gray-900 mb-2">
+            <a href="{{ "/" | relLangURL }}" class="hover:text-gray-600 transition-colors">
+              {{ .Site.Title }}
+            </a>
+          </h1>
           <p class="text-gray-600 text-sm">{{ .Site.Params.description }}</p>
         </div>
       </div>
