@@ -58,7 +58,7 @@
 
           <!-- Page number buttons -->
           {{ range $paginator.Pagers }}
-          <a href="{{ .URL }}" class="px-3 py-1 text-sm {{ if eq . $paginator }}text-gray-900 font-medium{{ else }}text-gray-600 hover:text-gray-900{{ end }}">
+          <a href="{{ .URL }}" class="px-3 py-1 text-sm rounded {{ if eq . $paginator }}text-gray-900 font-medium{{ else }}bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900{{ end }}">
             {{ .PageNumber }}
           </a>
           {{ end }}
