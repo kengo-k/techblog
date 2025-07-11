@@ -1,0 +1,35 @@
+{{/* shortcode: codefile
+   Usage examples:
+   {{< codefile src="assets/code/example.go" >}}
+   {{< codefile src="assets/code/example.go" lines="10-30" >}}
+   {{< codefile src="assets/code/example.go" lang="go" >}}
+*/}}
+
+{{- $src := .Get "src" -}}
+{{- if not $src }}
+  {{ errorf "codefile shortcode: 'src' parameter is required" }}
+{{- end }}
+
+{{- $content := readFile $src -}}
+{{- if not $content }}
+  {{ printf "<!-- codefile: unable to read %s -->" $src | safeHTML }}
+{{- else -}}
+  {{/* Optional line range */}}
+  {{ $lines := .Get "lines" }}
+  {{ if $lines }}
+    {{ $range := split $lines "-" }}
+    {{ $start := index $range 0 | int }}
+    {{ $end := cond (gt (len $range) 1) (index $range 1 | int) $start }}
+    {{ $tmp := slice }}
+    {{ range $i, $l := split $content "\n" }}
+      {{ $ln := add $i 1 }}
+      {{ if and (ge $ln $start) (le $ln $end) }}
+        {{ $tmp = $tmp | append $l }}
+      {{ end }}
+    {{ end }}
+    {{ $content = delimit $tmp "\n" }}
+  {{ end }}
+
+  {{ $lang := .Get "lang" | default (replace (path.Ext $src) "." "") }}
+  {{ highlight $content $lang "linenos=table" }}
+{{- end }}
