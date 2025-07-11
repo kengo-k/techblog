@@ -10,18 +10,20 @@ defaultContentLanguageInSubdir = false
     weight = 1
     languageName = '日本語'
     contentDir = 'content/ja'
+    title = "Just Plain Notes"
 
   [languages.en]
     weight = 2
     languageName = 'English'
     contentDir = 'content/en'
+    title = "Just Plain Notes"
 
 [pagination]
 pagerSize = 5
 enableEmoji = true
 
 [params]
-description = '技術情報とプログラミング'
+description = "個人的に気になったことのメモなど"
 author = 'kengo'
 showToc = true
 showCodeCopyButtons = true
@@ -72,4 +74,4 @@ month = 'months'
 date = ["date", ":fileModTime"]
 
 [languages.en.params]
-  description = "Tech articles and programming"
+  description = "Personal notes on what sparked my curiosity"
