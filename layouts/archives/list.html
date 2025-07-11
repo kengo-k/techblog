@@ -1,0 +1,46 @@
+{{ define "main" }}
+<div class="min-h-screen bg-white">
+  <div class="container mx-auto px-4 py-12">
+    <div class="mb-4">
+      <a href="/" class="text-sm text-gray-500 hover:text-gray-700">← ホームへ戻る</a>
+    </div>
+    <h1 class="text-2xl font-medium text-gray-900 mb-8">アーカイブ一覧</h1>
+
+    {{/* 全記事から年月別マップを生成 */}}
+    {{ $monthMap := dict }}
+    {{ range .Site.RegularPages }}
+      {{ $raw := (partial "extract-date.html" . | plainify | printf "%s") }}
+      {{ $dStr := (cond (ne $raw "") $raw (.Date.Format "2006-01-02")) }}
+      {{ $d := time $dStr }}
+      {{ $mKey := $d.Format "2006-01" }}
+      {{ $pages := index $monthMap $mKey | default slice }}
+      {{ $pages = $pages | append . }}
+      {{ $monthMap = merge $monthMap (dict $mKey $pages) }}
+    {{ end }}
+
+    {{/* 月キーをソート (新しい順) */}}
+    {{ $keys := slice }}
+    {{ range $k, $_ := $monthMap }}
+      {{ $keys = $keys | append $k }}
+    {{ end }}
+    {{ $sorted := sort $keys }}
+
+    <div class="space-y-1">
+      {{ range $i := seq (sub (len $sorted) 1) 0 }}
+        {{ $m := index $sorted $i }}
+        {{ $pages := index $monthMap $m }}
+        {{ $sample := index $pages 0 }}
+        {{ $rd := (partial "extract-date.html" $sample | plainify | printf "%s") }}
+        {{ $ds := (cond (ne $rd "") $rd ($sample.Date.Format "2006-01-02")) }}
+        {{ $pd := time $ds }}
+        <div class="flex items-center justify-between py-1 text-left text-sm hover:text-gray-600">
+          <a href="/months/{{ $m }}/" class="text-gray-700 hover:text-gray-600">
+            {{ $pd.Format "2006年1月" }}
+          </a>
+          <span class="text-gray-500 text-xs">({{ len $pages }})</span>
+        </div>
+      {{ end }}
+    </div>
+  </div>
+</div>
+{{ end }}

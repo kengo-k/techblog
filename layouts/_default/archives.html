@@ -1,165 +1,69 @@
 {{- define "main" }}
-
-<header class="page-header">
-  <h1>{{ .Title }}</h1>
-  {{- if .Description }}
-  <div class="post-description">{{ .Description }}</div>
-  {{- end }}
-</header>
-
-{{- $pages := where site.RegularPages "Type" "in" site.Params.mainSections }}
-
-{{- if .Site.Params.ShowAllPagesInArchive }}
-{{- $pages = site.RegularPages }}
-{{- end }}
-
-<!-- 月別フィルター -->
-<div class="archive-filters">
-  <h3>月別フィルター</h3>
-  <div class="filter-buttons">
-    <button class="filter-btn active" data-month="all">すべて</button>
-    {{- range ($pages.GroupByDate "2006-01") }}
-    <button class="filter-btn" data-month="{{ .Key }}">{{ dateFormat "2006年1月" (index .Pages 0).Date }}</button>
-    {{- end }}
-  </div>
-</div>
-
-{{- range $pages.GroupByDate "2006-01" }}
-{{- $currentMonth := .Key }}
-
-<div class="archive-month" data-month="{{ $currentMonth }}">
-  <h2 class="archive-month-header">
-    {{ dateFormat "2006年1月" (index .Pages 0).Date }}
-  </h2>
-  
-  <div class="archive-entries">
-    {{- range .Pages }}
-    <div class="archive-entry">
-      <h3 class="archive-entry-title">
-        <a href="{{ .Permalink }}" aria-label="記事: {{ .Title }}">{{ .Title }}</a>
-      </h3>
-      <div class="archive-meta">
-        <time>{{ .Date.Format "2006年1月2日" }}</time>
-        {{- with .Params.description }}
-        <div class="archive-description">{{ . }}</div>
-        {{- end }}
-      </div>
+<div class="min-h-screen bg-white">
+  <div class="container mx-auto px-4 py-12">
+    <div class="mb-4">
+      <a href="/" class="text-sm text-gray-500 hover:text-gray-700">← ホームへ戻る</a>
     </div>
-    {{- end }}
+    <h1 class="text-2xl font-medium text-gray-900 mb-8">アーカイブ一覧</h1>
+
+    {{/* 全記事から年月別マップを生成 */}}
+    {{ $monthMap := dict }}
+    {{ range .Site.RegularPages }}
+      {{ $raw := (partial "extract-date.html" . | plainify | printf "%s") }}
+      {{ $dStr := (cond (ne $raw "") $raw (.Date.Format "2006-01-02")) }}
+      {{ $d := time $dStr }}
+      {{ $mKey := $d.Format "2006-01" }}
+      {{ $pages := index $monthMap $mKey | default slice }}
+      {{ $pages = $pages | append . }}
+      {{ $monthMap = merge $monthMap (dict $mKey $pages) }}
+    {{ end }}
+
+    {{/* 月キーをソート (新しい順) */}}
+    {{/* 年別に月情報をまとめる */}}
+    {{ $yearMap := dict }}
+    {{ range $mk, $pgs := $monthMap }}
+      {{ $yr := substr $mk 0 4 }}
+      {{ $mDict := index $yearMap $yr | default dict }}
+      {{ $mDict = merge $mDict (dict $mk $pgs) }}
+      {{ $yearMap = merge $yearMap (dict $yr $mDict) }}
+    {{ end }}
+
+    {{/* 年キーをソート (新しい順) */}}
+    {{ $yrs := slice }}
+    {{ range $y, $_ := $yearMap }}
+      {{ $yrs = $yrs | append $y }}
+    {{ end }}
+    {{ $sortedYrs := sort $yrs }}
+
+    <div class="space-y-2">
+      {{ range $j := seq (sub (len $sortedYrs) 1) 0 }}
+        {{ $yr := index $sortedYrs $j }}
+        {{ $monthsDict := index $yearMap $yr }}
+        {{ $mKeys := slice }}
+        {{ range $mk, $_ := $monthsDict }}
+          {{ $mKeys = $mKeys | append $mk }}
+        {{ end }}
+        {{ $mSorted := sort $mKeys }}
+        <div class="flex items-center flex-wrap text-sm py-1 border-b border-gray-100 last:border-b-0">
+          <span class="font-medium text-gray-900 mr-4">{{ $yr }}年</span>
+          {{ range $mSorted }}
+            {{ $pgs := index $monthsDict . }}
+            {{ $sample := index $pgs 0 }}
+            {{ $rd := (partial "extract-date.html" $sample | plainify | printf "%s") }}
+            {{ $ds := (cond (ne $rd "") $rd ($sample.Date.Format "2006-01-02")) }}
+            {{ $pd := time $ds }}
+            <a href="/months/{{ . }}/" class="px-2 py-1 mr-2 mb-1 bg-gray-100 rounded text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors">
+              {{ $pd.Format "1月" }}<span class="text-gray-500">({{ len $pgs }})</span>
+            </a>
+          {{ end }}
+        </div>
+      {{ end }}
+    </div>
+
+    <!-- Advertisement Area -->
+    <div class="h-48 mt-12 bg-gray-50 border border-gray-200 rounded flex items-center justify-center">
+      <span class="text-gray-400 text-xs">広告</span>
+    </div>
   </div>
 </div>
-
-{{- end }}
-
-<style>
-.archive-filters {
-  margin-bottom: 2rem;
-  padding: 1rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-}
-
-.filter-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-.filter-btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--border);
-  background: var(--theme);
-  color: var(--primary);
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.filter-btn:hover {
-  background: var(--border);
-}
-
-.filter-btn.active {
-  background: var(--primary);
-  color: var(--theme);
-}
-
-.archive-month {
-  margin-bottom: 2rem;
-  transition: opacity 0.3s ease;
-}
-
-.archive-month.hidden {
-  display: none;
-}
-
-.archive-month-header {
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--border);
-  color: var(--primary);
-}
-
-.archive-entries {
-  margin-left: 1rem;
-}
-
-.archive-entry {
-  margin-bottom: 1rem;
-  padding: 1rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-}
-
-.archive-entry-title {
-  margin-bottom: 0.5rem;
-}
-
-.archive-entry-title a {
-  color: var(--primary);
-  text-decoration: none;
-}
-
-.archive-entry-title a:hover {
-  text-decoration: underline;
-}
-
-.archive-meta {
-  font-size: 0.9rem;
-  color: var(--secondary);
-}
-
-.archive-description {
-  margin-top: 0.5rem;
-  font-style: italic;
-}
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  const archiveMonths = document.querySelectorAll('.archive-month');
-
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', function() {
-      const selectedMonth = this.dataset.month;
-      
-      // アクティブボタンの切り替え
-      filterBtns.forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-      
-      // 月別セクションの表示/非表示
-      archiveMonths.forEach(month => {
-        if (selectedMonth === 'all' || month.dataset.month === selectedMonth) {
-          month.classList.remove('hidden');
-        } else {
-          month.classList.add('hidden');
-        }
-      });
-    });
-  });
-});
-</script>
-
 {{- end }}
