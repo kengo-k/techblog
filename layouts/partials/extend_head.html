@@ -41,4 +41,16 @@
     .chroma {
       background-color: #eef1f4; /* Slightly darker than #f6f8fa */
     }
+
+    /* ---- Align line numbers with code lines ---- */
+    /* Remove vertical padding on code block that caused offset */
+    .highlight pre.chroma code {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    /* Likewise ensure line-number column has identical padding */
+    .chroma .lnt {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
   </style>

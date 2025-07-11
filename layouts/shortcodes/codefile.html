@@ -20,16 +20,23 @@
     {{ $range := split $lines "-" }}
     {{ $start := index $range 0 | int }}
     {{ $end := cond (gt (len $range) 1) (index $range 1 | int) $start }}
-    {{ $tmp := slice }}
+    {{ $sel := slice }}
     {{ range $i, $l := split $content "\n" }}
       {{ $ln := add $i 1 }}
       {{ if and (ge $ln $start) (le $ln $end) }}
-        {{ $tmp = $tmp | append $l }}
+        {{ $sel = $sel | append $l }}
       {{ end }}
     {{ end }}
-    {{ $content = delimit $tmp "\n" }}
+    {{ $content = delimit $sel "\n" }}
   {{ end }}
 
   {{ $lang := .Get "lang" | default (replace (path.Ext $src) "." "") }}
-  {{ highlight $content $lang "linenos=table" }}
+  {{ $opts := "linenos=table" }}
+  {{ $lineStart := 1 }}
+  {{ if $lines }}
+    {{ $first := index (split $lines "-") 0 }}
+    {{ $lineStart = $first | int }}
+  {{ end }}
+  {{ $opts = printf "%s,linenostart=%d" $opts $lineStart }}
+  {{ highlight $content $lang $opts }}
 {{- end }}
