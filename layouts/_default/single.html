@@ -2,7 +2,7 @@
 <div class="container mx-auto px-4 py-4">
   <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
     <main class="lg:col-span-3">
-      <article class="p-8 border border-gray-200">
+      <article class="p-8">
         <!-- Article Header -->
         <header class="mb-8">
           <div class="flex justify-between items-center mb-4">
@@ -22,31 +22,17 @@
 
         <!-- Article Content -->
         <div class="prose prose-lg max-w-none">
+          {{ if .TableOfContents }}
+          {{ $toc := replace (replace .TableOfContents "<ul>" "<ol class=\"toc-ol ml-4\">") "</ul>" "</ol>" | safeHTML }}
+          <nav class="mb-8 p-4 bg-gray-50 border-l-4 border-gray-200 rounded-md">
+            {{ $toc }}
+          </nav>
+          {{ end }}
           {{ .Content }}
         </div>
       </article>
 
-      <!-- Navigation -->
-      <div class="mt-8 flex justify-between">
-        {{ if .PrevInSection }}
-        <a href="{{ .PrevInSection.Permalink }}" class="text-blue-600 hover:text-blue-800">
-          ← {{ .PrevInSection.Title }}
-        </a>
-        {{ end }}
-
-        {{ if .NextInSection }}
-        <a href="{{ .NextInSection.Permalink }}" class="text-blue-600 hover:text-blue-800">
-          {{ .NextInSection.Title }} →
-        </a>
-        {{ end }}
-      </div>
-
-      <!-- Back to Home -->
-      <div class="text-center mt-8">
-        <a href="{{ .Site.BaseURL }}" class="text-gray-600 hover:text-gray-800">
-          ← 記事一覧に戻る
-        </a>
-      </div>
+      <!-- Navigation links removed as per design -->
     </main>
 
     <!-- Sidebar -->
@@ -121,4 +107,34 @@
     </aside>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Collect headings inside article content
+  const headings = document.querySelectorAll('.prose h2, .prose h3, .prose h4, .prose h5, .prose h6');
+  if (!headings.length) return;
+
+  const levelMap = {H2: 0, H3: 1, H4: 2, H5: 3, H6: 4};
+  const counters = [0, 0, 0, 0, 0];
+
+  // Assign sequential IDs like 1-2-3
+  headings.forEach(h => {
+    const lvl = levelMap[h.tagName];
+    counters[lvl]++;
+    // reset lower-level counters
+    for (let i = lvl + 1; i < counters.length; i++) counters[i] = 0;
+    const num = counters.slice(0, lvl + 1).filter(n => n > 0).join('-');
+    const id = `sec-${num}`;
+    h.id = id;
+  });
+
+  // Update TOC links in the same order
+  const tocLinks = document.querySelectorAll('nav .toc-ol a');
+  headings.forEach((h, idx) => {
+    if (tocLinks[idx]) {
+      tocLinks[idx].setAttribute('href', `#${h.id}`);
+    }
+  });
+});
+</script>
 {{ end }}
