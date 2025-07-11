@@ -48,7 +48,7 @@
 
         <!-- Pagination -->
         {{ if ge $paginator.TotalPages 1 }}
-        <div class="flex items-center justify-center space-x-1 mt-12 pt-8 border-t border-gray-100">
+        <div class="flex items-center justify-center space-x-1 mt-12 pt-8">
           <!-- Previous page button -->
           {{ if $paginator.HasPrev }}
           <a href="{{ $paginator.Prev.URL }}" class="px-3 py-1 text-sm text-gray-600 hover:text-gray-900">←</a>

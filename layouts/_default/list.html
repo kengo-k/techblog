@@ -44,10 +44,10 @@
           </div>
         </article>
         {{ end }}
-        
+
         <!-- Pagination -->
         {{ if ge $paginator.TotalPages 1 }}
-        <div class="flex items-center justify-center space-x-1 mt-12 pt-8 border-t border-gray-100">
+        <div class="flex items-center justify-center space-x-1 mt-12 pt-8">
           <!-- Previous page button -->
           {{ if $paginator.HasPrev }}
           <a href="{{ $paginator.Prev.URL }}" class="px-3 py-1 text-sm text-gray-600 hover:text-gray-900">←</a>
@@ -115,7 +115,7 @@
                 {{ $pages = $pages | append . }}
                 {{ $archiveMap = merge $archiveMap (dict $monthKey $pages) }}
               {{ end }}
-              
+
               {{/* Display months in reverse chronological order */}}
               {{ $monthKeys := slice }}
               {{ range $monthKey, $pages := $archiveMap }}
@@ -165,7 +165,7 @@ let currentFilter = { month: null, tag: null };
 function filterByMonth(month) {
   currentFilter.month = month;
   applyFilters();
-  
+
   // アーカイブリンクのアクティブ状態を更新
   document.querySelectorAll('.archive-link').forEach(link => {
     if (link.dataset.month === month) {
@@ -178,22 +178,22 @@ function filterByMonth(month) {
 
 function applyFilters() {
   const posts = document.querySelectorAll('.blog-post');
-  
+
   posts.forEach(post => {
     let showPost = true;
-    
+
     // 月フィルター
     if (currentFilter.month && post.dataset.month !== currentFilter.month) {
       showPost = false;
     }
-    
+
     if (showPost) {
       post.style.display = 'block';
     } else {
       post.style.display = 'none';
     }
   });
-  
+
   // フィルター状態を表示
   updateFilterStatus();
 }
@@ -203,12 +203,12 @@ function updateFilterStatus() {
   if (currentFilter.month) {
     const monthNames = {
       '2024-09': '2024年9月',
-      '2024-10': '2024年10月', 
+      '2024-10': '2024年10月',
       '2024-11': '2024年11月'
     };
     statusText = monthNames[currentFilter.month] || currentFilter.month;
   }
-  
+
   // フィルター状態表示エリアを作成・更新
   let statusDiv = document.getElementById('filter-status');
   if (!statusDiv) {
@@ -217,10 +217,10 @@ function updateFilterStatus() {
     statusDiv.className = 'mb-6 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800';
     document.querySelector('main').insertBefore(statusDiv, document.querySelector('main').firstElementChild);
   }
-  
+
   if (currentFilter.month) {
     statusDiv.innerHTML = `
-      フィルター中: ${statusText} 
+      フィルター中: ${statusText}
       <button onclick="clearFilters()" class="ml-2 text-blue-600 hover:text-blue-800 underline">クリア</button>
     `;
     statusDiv.style.display = 'block';
@@ -232,7 +232,7 @@ function updateFilterStatus() {
 function clearFilters() {
   currentFilter = { month: null, tag: null };
   applyFilters();
-  
+
   // すべてのアーカイブリンクのアクティブ状態をクリア
   document.querySelectorAll('.archive-link').forEach(link => {
     link.classList.remove('font-bold', 'text-blue-600');
