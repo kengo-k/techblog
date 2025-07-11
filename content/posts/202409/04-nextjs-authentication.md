@@ -1,6 +1,5 @@
 ---
 title: "Next.js App Routerでの認証実装パターン"
-date: 2024-09-01T11:00:00+09:00
 draft: false
 tags: ["React", "JavaScript", "Web"]
 categories: ["技術"]

@@ -6,7 +6,12 @@
       <main class="lg:col-span-3">
         {{ $paginator := .Paginate .Site.RegularPages }}
         {{ range $paginator.Pages }}
-        <article class="border-b border-gray-100 pb-8 mb-8 last:border-b-0 blog-post" data-month="{{ .Date.Format "2006-01" }}" data-tags="{{ delimit .Params.tags "," }}">
+        {{/* Extract date from file path or fallback to .Date */}}
+        {{ $partialDate := (partial "extract-date.html" . | plainify | printf "%s") }}
+        {{ $dateStr := (cond (ne $partialDate "") $partialDate (.Date.Format "2006-01-02")) }}
+        {{ $postDate := time $dateStr }}
+        {{ $dataMonth := $postDate.Format "2006-01" }}
+        <article class="border-b border-gray-100 pb-8 mb-8 last:border-b-0 blog-post" data-month="{{ $dataMonth }}" data-tags="{{ delimit .Params.tags "," }}">
           <div class="flex gap-6">
             <div class="w-48 flex-shrink-0">
               <div class="w-full h-32 bg-gray-200 rounded flex items-center justify-center">
@@ -30,7 +35,11 @@
                   </span>
                   {{ end }}
                 </div>
-                <span>{{ .Date.Format "2006年1月2日" }}</span>
+                {{/* Display date derived from path */}}
+                {{ $partialDate := (partial "extract-date.html" . | plainify | printf "%s") }}
+                {{ $dateStr := (cond (ne $partialDate "") $partialDate (.Date.Format "2006-01-02")) }}
+                {{ $postDate := time $dateStr }}
+                <span>{{ $postDate.Format "2006年1月2日" }}</span>
               </div>
             </div>
           </div>
@@ -91,13 +100,36 @@
           <div>
             <h3 class="text-sm font-medium text-gray-900 mb-4">アーカイブ</h3>
             <div class="space-y-1">
-              {{ range (.Site.RegularPages.GroupByDate "2006-01").Reverse }}
-              <div class="flex items-center justify-between py-1 text-left text-sm hover:text-gray-600">
-                <a href="/months/{{ .Key }}/" class="text-gray-700 hover:text-gray-600">
-                  {{ (index .Pages 0).Date.Format "2006年1月" }}
-                </a>
-                <span class="text-gray-500 text-xs">({{ len .Pages }})</span>
-              </div>
+              {{/* Custom archive generation using path-based dates */}}
+              {{ $monthMap := dict }}
+              {{ range .Site.RegularPages }}
+                {{ $partialDate := (partial "extract-date.html" . | plainify | printf "%s") }}
+                {{ $dateStr := (cond (ne $partialDate "") $partialDate (.Date.Format "2006-01-02")) }}
+                {{ $postDate := time $dateStr }}
+                {{ $monthKey := $postDate.Format "2006-01" }}
+                {{ $pages := index $monthMap $monthKey | default slice }}
+                {{ $pages = $pages | append . }}
+                {{ $monthMap = merge $monthMap (dict $monthKey $pages) }}
+              {{ end }}
+              {{ $monthKeys := slice }}
+              {{ range $month, $pages := $monthMap }}
+                {{ $monthKeys = $monthKeys | append $month }}
+              {{ end }}
+              {{ $sortedMonths := sort $monthKeys }}
+              {{ range $i := seq (sub (len $sortedMonths) 1) 0 }}
+                {{ $monthKey := index $sortedMonths $i }}
+                {{ $pages := index $monthMap $monthKey }}
+                {{ $firstPage := index $pages 0 }}
+                {{ $partialDate := (partial "extract-date.html" $firstPage | plainify | printf "%s") }}
+                {{ $dateStr := (cond (ne $partialDate "") $partialDate ($firstPage.Date.Format "2006-01-02")) }}
+                {{ $parsedDate := time $dateStr }}
+                {{ $displayDate := $parsedDate.Format "2006年1月" }}
+                <div class="flex items-center justify-between py-1 text-left text-sm hover:text-gray-600">
+                  <a href="/months/{{ $monthKey }}/" class="text-gray-700 hover:text-gray-600">
+                    {{ $displayDate }}
+                  </a>
+                  <span class="text-gray-500 text-xs">({{ len $pages }})</span>
+                </div>
               {{ end }}
             </div>
           </div>
@@ -148,7 +180,7 @@ function applyFilters() {
     else if (currentFilter.month && !currentFilter.tag) {
       showPost = post.dataset.month === currentFilter.month;
     }
-    // タグフィルターのみ  
+    // タグフィルターのみ
     else if (!currentFilter.month && currentFilter.tag) {
       showPost = post.dataset.tags.includes(currentFilter.tag);
     }

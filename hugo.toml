@@ -53,3 +53,6 @@ Content = '技術情報とプログラミング'
 tag = 'tags'
 category = 'categories'
 month = 'months'
+
+[frontmatter]
+date = ["date", ":fileModTime"]

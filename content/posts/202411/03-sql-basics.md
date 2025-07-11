@@ -1,6 +1,5 @@
 ---
 title: "SQL基本操作ガイド"
-date: 2024-11-03T16:00:00+09:00
 draft: false
 tags: ["React", "JavaScript", "Web"]
 categories: ["技術"]

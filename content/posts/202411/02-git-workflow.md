@@ -1,6 +1,5 @@
 ---
 title: "Git基本ワークフロー"
-date: 2024-11-02T08:00:00+09:00
 draft: false
 tags: ["React", "JavaScript", "Web"]
 categories: ["技術"]

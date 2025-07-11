@@ -1,6 +1,5 @@
 ---
 title: "Node.js Expressの基本"
-date: 2024-10-04T11:00:00+09:00
 draft: false
 tags: ["React", "JavaScript", "Web"]
 categories: ["技術"]

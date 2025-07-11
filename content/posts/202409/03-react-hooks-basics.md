@@ -1,6 +1,5 @@
 ---
 title: "React Hooksの基本とベストプラクティス"
-date: 2024-09-02T10:00:00+09:00
 draft: false
 tags: ["React", "JavaScript", "Web"]
 categories: ["技術"]

@@ -1,6 +1,5 @@
 ---
 title: "React Server Componentsの基本概念と実装方法"
-date: 2024-09-04T09:00:00+09:00
 draft: false
 tags: ["React", "JavaScript", "Web"]
 categories: ["技術"]

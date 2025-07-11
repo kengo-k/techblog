@@ -1,6 +1,5 @@
 ---
 title: "Web API設計のベストプラクティス"
-date: 2024-11-04T12:00:00+09:00
 draft: false
 tags: ["React", "JavaScript", "Web"]
 categories: ["技術"]

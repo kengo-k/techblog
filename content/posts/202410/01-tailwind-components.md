@@ -1,6 +1,5 @@
 ---
 title: "Tailwind CSSのカスタムコンポーネント設計"
-date: 2024-10-01T12:00:00+09:00
 draft: false
 tags: ["React", "JavaScript", "Web"]
 categories: ["技術"]

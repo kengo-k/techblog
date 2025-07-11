@@ -1,6 +1,5 @@
 ---
 title: "JavaScript async/awaitの基本"
-date: 2024-10-03T09:30:00+09:00
 draft: false
 tags: ["React", "JavaScript", "Web"]
 categories: ["技術"]

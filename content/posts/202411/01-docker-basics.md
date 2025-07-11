@@ -1,6 +1,5 @@
 ---
 title: "Docker基本操作ガイド"
-date: 2024-11-01T10:30:00+09:00
 draft: false
 tags: ["React", "JavaScript", "Web"]
 categories: ["技術"]
