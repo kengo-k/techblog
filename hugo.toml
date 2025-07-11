@@ -1,0 +1,55 @@
+baseURL = 'https://example.org/'
+languageCode = 'ja'
+title = 'Tech Blog'
+theme = 'PaperMod'
+[pagination]
+pagerSize = 5
+enableEmoji = true
+
+[params]
+description = '技術情報とプログラミング'
+author = 'kengo'
+showToc = true
+showCodeCopyButtons = true
+showReadingTime = true
+showShareButtons = true
+showPostNavLinks = true
+showBreadCrumbs = true
+showWordCount = true
+showFullTextinRSS = true
+ShowPageNums = true
+defaultTheme = 'auto'
+
+[params.homeInfoParams]
+Title = 'Tech Blog'
+Content = '技術情報とプログラミング'
+
+[menu]
+  [[menu.main]]
+    identifier = 'home'
+    name = 'Home'
+    url = '/'
+    weight = 10
+
+  [[menu.main]]
+    identifier = 'posts'
+    name = 'Posts'
+    url = '/posts/'
+    weight = 20
+
+  [[menu.main]]
+    identifier = 'tags'
+    name = 'Tags'
+    url = '/tags/'
+    weight = 30
+
+  [[menu.main]]
+    identifier = 'archive'
+    name = 'Archive'
+    url = '/archives/'
+    weight = 40
+
+[taxonomies]
+tag = 'tags'
+category = 'categories'
+month = 'months'

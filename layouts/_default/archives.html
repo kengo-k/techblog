@@ -1,0 +1,165 @@
+{{- define "main" }}
+
+<header class="page-header">
+  <h1>{{ .Title }}</h1>
+  {{- if .Description }}
+  <div class="post-description">{{ .Description }}</div>
+  {{- end }}
+</header>
+
+{{- $pages := where site.RegularPages "Type" "in" site.Params.mainSections }}
+
+{{- if .Site.Params.ShowAllPagesInArchive }}
+{{- $pages = site.RegularPages }}
+{{- end }}
+
+<!-- 月別フィルター -->
+<div class="archive-filters">
+  <h3>月別フィルター</h3>
+  <div class="filter-buttons">
+    <button class="filter-btn active" data-month="all">すべて</button>
+    {{- range ($pages.GroupByDate "2006-01") }}
+    <button class="filter-btn" data-month="{{ .Key }}">{{ dateFormat "2006年1月" (index .Pages 0).Date }}</button>
+    {{- end }}
+  </div>
+</div>
+
+{{- range $pages.GroupByDate "2006-01" }}
+{{- $currentMonth := .Key }}
+
+<div class="archive-month" data-month="{{ $currentMonth }}">
+  <h2 class="archive-month-header">
+    {{ dateFormat "2006年1月" (index .Pages 0).Date }}
+  </h2>
+  
+  <div class="archive-entries">
+    {{- range .Pages }}
+    <div class="archive-entry">
+      <h3 class="archive-entry-title">
+        <a href="{{ .Permalink }}" aria-label="記事: {{ .Title }}">{{ .Title }}</a>
+      </h3>
+      <div class="archive-meta">
+        <time>{{ .Date.Format "2006年1月2日" }}</time>
+        {{- with .Params.description }}
+        <div class="archive-description">{{ . }}</div>
+        {{- end }}
+      </div>
+    </div>
+    {{- end }}
+  </div>
+</div>
+
+{{- end }}
+
+<style>
+.archive-filters {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.filter-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  background: var(--theme);
+  color: var(--primary);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+  background: var(--border);
+}
+
+.filter-btn.active {
+  background: var(--primary);
+  color: var(--theme);
+}
+
+.archive-month {
+  margin-bottom: 2rem;
+  transition: opacity 0.3s ease;
+}
+
+.archive-month.hidden {
+  display: none;
+}
+
+.archive-month-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border);
+  color: var(--primary);
+}
+
+.archive-entries {
+  margin-left: 1rem;
+}
+
+.archive-entry {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.archive-entry-title {
+  margin-bottom: 0.5rem;
+}
+
+.archive-entry-title a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.archive-entry-title a:hover {
+  text-decoration: underline;
+}
+
+.archive-meta {
+  font-size: 0.9rem;
+  color: var(--secondary);
+}
+
+.archive-description {
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const archiveMonths = document.querySelectorAll('.archive-month');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const selectedMonth = this.dataset.month;
+      
+      // アクティブボタンの切り替え
+      filterBtns.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      
+      // 月別セクションの表示/非表示
+      archiveMonths.forEach(month => {
+        if (selectedMonth === 'all' || month.dataset.month === selectedMonth) {
+          month.classList.remove('hidden');
+        } else {
+          month.classList.add('hidden');
+        }
+      });
+    });
+  });
+});
+</script>
+
+{{- end }}

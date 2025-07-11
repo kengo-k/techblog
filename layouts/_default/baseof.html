@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
+    <meta name="description" content="{{ block "description" . }}{{ .Site.Params.description }}{{ end }}">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS -->
+    <style>
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        body {
+            font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            background-color: #ffffff;
+        }
+        
+        .prose {
+            max-width: none;
+        }
+        
+        .prose h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+        
+        .prose h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111827;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .prose h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .prose p {
+            margin-bottom: 1rem;
+            line-height: 1.75;
+            color: #374151;
+        }
+        
+        .prose code {
+            background-color: #f3f4f6;
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            color: #ef4444;
+        }
+        
+        .prose pre {
+            background-color: #1f2937;
+            color: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        .prose pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+        }
+        
+        .prose ul, .prose ol {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+        
+        .prose li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+      <div class="container mx-auto px-4 py-12">
+        <div class="text-center">
+          <a href="/" class="block">
+            <h1 class="text-3xl font-light text-gray-900 mb-2 cursor-pointer hover:text-gray-600 transition-colors">{{ .Site.Title }}</h1>
+          </a>
+          <p class="text-gray-600 text-sm">{{ .Site.Params.description }}</p>
+        </div>
+      </div>
+    </header>
+
+    <main>
+        {{ block "main" . }}{{ end }}
+    </main>
+</body>
+</html>
