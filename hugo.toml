@@ -75,3 +75,9 @@ date = ["date", ":fileModTime"]
 
 [languages.en.params]
   description = "Personal notes on what sparked my curiosity"
+
+[markup]
+  [markup.highlight]
+    noClasses = false
+    style = "github"
+    lineNos = false

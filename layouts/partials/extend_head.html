@@ -1,6 +1,9 @@
 <!-- Google Fonts for site title -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Labrada:wght@400&display=swap&text=Just%20Plain%20Notes" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Denk+One&display=swap" rel="stylesheet">
+<!-- Chroma syntax highlighting theme -->
+<link rel="stylesheet" href="{{ "/css/chroma-github.css" | relURL }}">
+<!-- <link rel="stylesheet" href="/css/chroma-github.css"> -->
 <style>
   /* Labrada font examples */
   .labrada-regular {
@@ -32,5 +35,10 @@
     .toc-ol li > ol { /* reset counter for nested */
       counter-reset: item;
       margin-left: 1rem;
+    }
+
+    /* Slightly darker background for code blocks to distinguish from page */
+    .chroma {
+      background-color: #eef1f4; /* Slightly darker than #f6f8fa */
     }
   </style>
