@@ -70,3 +70,6 @@ month = 'months'
 
 [frontmatter]
 date = ["date", ":fileModTime"]
+
+[languages.en.params]
+  description = "Tech articles and programming"
