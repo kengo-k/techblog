@@ -1,14 +1,13 @@
 {{ define "main" }}
-<div class="container mx-auto px-4 py-12">
+<div class="container mx-auto px-4 py-4">
   <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
     <main class="lg:col-span-3">
-      <article class="bg-white p-8">
+      <article class="p-8 border border-gray-200">
         <!-- Article Header -->
         <header class="mb-8">
-          <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ .Title }}</h1>
-
-          <div class="flex justify-between items-center text-sm text-gray-500 mb-4">
-            <time>{{ cond (eq $.Site.Language.Lang "en") (.Date.Format "January 2, 2006") (.Date.Format "2006年1月2日") }}</time>
+          <div class="flex justify-between items-center mb-4">
+            <h1 class="text-3xl font-bold text-gray-900">{{ .Title }}</h1>
+            <time class="text-sm text-gray-500 ml-4 whitespace-nowrap">{{ cond (eq $.Site.Language.Lang "en") (.Date.Format "January 2, 2006") (.Date.Format "2006年1月2日") }}</time>
           </div>
 
           <!-- Tags -->
