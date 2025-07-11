@@ -12,7 +12,10 @@
 
         {{ $paginator := .Paginate .Pages }}
         {{ range $paginator.Pages }}
-        <article class="border-b border-gray-100 pb-8 mb-8 last:border-b-0 blog-post" data-month="{{ .Date.Format "2006-01" }}" data-tags="{{ if .Params.tags }}{{ delimit .Params.tags "," }}{{ end }}">
+        {{ $partialDate := (partial "extract-date.html" . | plainify | printf "%s") }}
+        {{ $dateStr := (cond (ne $partialDate "") $partialDate (.Date.Format "2006-01-02")) }}
+        {{ $postDate := time $dateStr }}
+        <article class="border-b border-gray-100 pb-8 mb-8 last:border-b-0 blog-post" data-month="{{ $postDate.Format "2006-01" }}" data-tags="{{ if .Params.tags }}{{ delimit .Params.tags "," }}{{ end }}">
           <div class="flex gap-6">
             <div class="w-48 flex-shrink-0">
               <div class="w-full h-32 bg-gray-200 rounded flex items-center justify-center">
@@ -38,13 +41,13 @@
                   {{ end }}
                   {{ end }}
                 </div>
-                <span>{{ .Date.Format "2006年1月2日" }}</span>
+                <span>{{ $postDate.Format "2006年1月2日" }}</span>
               </div>
             </div>
           </div>
         </article>
         {{ end }}
-        
+
         <!-- Pagination -->
         {{ if ge $paginator.TotalPages 1 }}
         <div class="flex items-center justify-center space-x-1 mt-12 pt-8 border-t border-gray-100">
@@ -99,13 +102,36 @@
           <div>
             <h3 class="text-sm font-medium text-gray-900 mb-4">アーカイブ</h3>
             <div class="space-y-1">
-              {{ range (.Site.RegularPages.GroupByDate "2006年1月").Reverse }}
-              <div class="flex items-center justify-between py-1 text-left text-sm hover:text-gray-600">
-                <a href="/months/{{ (index .Pages 0).Date.Format "2006-01" }}/" class="text-gray-700 hover:text-gray-600 archive-link" data-month="{{ (index .Pages 0).Date.Format "2006-01" }}" onclick="handleMonthClick(event, '{{ (index .Pages 0).Date.Format "2006-01" }}')">
-                  {{ .Key }}
-                </a>
-                <span class="text-gray-500 text-xs">({{ len .Pages }})</span>
-              </div>
+              {{/* custom archive, same as index */}}
+              {{ $monthMap := dict }}
+              {{ range .Site.RegularPages }}
+                {{ $pDateStr := (partial "extract-date.html" . | plainify | printf "%s") }}
+                {{ $dStr := (cond (ne $pDateStr "") $pDateStr (.Date.Format "2006-01-02")) }}
+                {{ $pDate := time $dStr }}
+                {{ $mKey := $pDate.Format "2006-01" }}
+                {{ $pages := index $monthMap $mKey | default slice }}
+                {{ $pages = $pages | append . }}
+                {{ $monthMap = merge $monthMap (dict $mKey $pages) }}
+              {{ end }}
+              {{ $keys := slice }}
+              {{ range $k, $v := $monthMap }}
+                {{ $keys = $keys | append $k }}
+              {{ end }}
+              {{ $sorted := sort $keys }}
+              {{ range $i := seq (sub (len $sorted) 1) 0 }}
+                {{ $mKey := index $sorted $i }}
+                {{ $pages := index $monthMap $mKey }}
+                {{ $fPage := index $pages 0 }}
+                {{ $pDateStr := (partial "extract-date.html" $fPage | plainify | printf "%s") }}
+                {{ $dStr := (cond (ne $pDateStr "") $pDateStr ($fPage.Date.Format "2006-01-02")) }}
+                {{ $pDate := time $dStr }}
+                {{ $disp := $pDate.Format "2006年1月" }}
+                <div class="flex items-center justify-between py-1 text-left text-sm hover:text-gray-600">
+                  <a href="/months/{{ $mKey }}/" class="text-gray-700 hover:text-gray-600 archive-link" data-month="{{ $mKey }}" onclick="handleMonthClick(event, '{{ $mKey }}')">
+                    {{ $disp }}
+                  </a>
+                  <span class="text-gray-500 text-xs">({{ len $pages }})</span>
+                </div>
               {{ end }}
             </div>
           </div>
@@ -127,21 +153,21 @@ function handleMonthClick(event, month) {
   // 現在のページの年月を取得
   const currentPageMonth = document.querySelector('h1').textContent.trim();
   const currentMonth = currentPageMonth.replace('年', '-').replace('月', '');
-  
+
   // 現在のページと同じ年月をクリックした場合はページ遷移を防ぐ
   if (month === currentMonth) {
     event.preventDefault();
     // 何もしない（既に該当する年月のページにいるため）
     return;
   }
-  
+
   // 異なる年月の場合は通常のリンク動作を許可
 }
 
 function filterByMonth(month) {
   currentFilter = { month: month, tag: null };  // タグをクリア
   applyFilters();
-  
+
   // アーカイブリンクのアクティブ状態を更新
   document.querySelectorAll('.archive-link').forEach(link => {
     if (link.dataset.month === month) {
@@ -171,7 +197,7 @@ function applyFilters() {
     else if (currentFilter.month && !currentFilter.tag) {
       showPost = post.dataset.month === currentFilter.month;
     }
-    // タグフィルターのみ  
+    // タグフィルターのみ
     else if (!currentFilter.month && currentFilter.tag) {
       showPost = post.dataset.tags.includes(currentFilter.tag);
     }
@@ -182,7 +208,7 @@ function applyFilters() {
       post.style.display = 'none';
     }
   });
-  
+
   // フィルター状態を表示
   updateFilterStatus();
 }
@@ -192,7 +218,7 @@ function updateFilterStatus() {
   if (currentFilter.month) {
     const monthNames = {
       '2024-09': '2024年9月',
-      '2024-10': '2024年10月', 
+      '2024-10': '2024年10月',
       '2024-11': '2024年11月'
     };
     statusText = monthNames[currentFilter.month] || currentFilter.month;
@@ -200,7 +226,7 @@ function updateFilterStatus() {
   if (currentFilter.tag) {
     statusText += (currentFilter.month ? ' + ' : '') + `タグ: ${currentFilter.tag}`;
   }
-  
+
   // フィルター状態表示エリアを作成・更新
   let statusDiv = document.getElementById('filter-status');
   if (!statusDiv) {
@@ -209,7 +235,7 @@ function updateFilterStatus() {
     statusDiv.className = 'mb-6 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800';
     document.querySelector('main').insertBefore(statusDiv, document.querySelector('main').firstElementChild);
   }
-  
+
   if (currentFilter.month || currentFilter.tag) {
     statusDiv.innerHTML = `
       フィルター中: ${statusText}
@@ -224,7 +250,7 @@ function updateFilterStatus() {
 function clearFilters() {
   currentFilter = { month: null, tag: null };
   applyFilters();
-  
+
   // すべてのアーカイブリンクのアクティブ状態をクリア
   document.querySelectorAll('.archive-link').forEach(link => {
     link.classList.remove('font-bold', 'text-blue-600');

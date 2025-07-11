@@ -99,13 +99,52 @@
           <div>
             <h3 class="text-sm font-medium text-gray-900 mb-4">アーカイブ</h3>
             <div class="space-y-1">
-              {{ range (.Site.RegularPages.GroupByDate "2006年1月").Reverse }}
-              <div class="flex items-center justify-between py-1 text-left text-sm hover:text-gray-600">
-                <a href="/months/{{ (index .Pages 0).Date.Format "2006-01" }}/" class="text-gray-700 hover:text-gray-600">
-                  {{ .Key }}
-                </a>
-                <span class="text-gray-500 text-xs">({{ len .Pages }})</span>
-              </div>
+              {{/* Create custom archive list with extracted dates */}}
+              {{ $archiveMap := dict }}
+              {{ range .Site.RegularPages }}
+                {{ $customDate := partial "extract-date.html" . }}
+                {{ $monthKey := "" }}
+                {{ if $customDate }}
+                  {{ $cleanDate := trim $customDate " \n\t" }}
+                  {{ $parsedDate := time $cleanDate }}
+                  {{ $monthKey = $parsedDate.Format "2006-01" }}
+                {{ else }}
+                  {{ $monthKey = .Date.Format "2006-01" }}
+                {{ end }}
+                {{ $pages := index $archiveMap $monthKey | default slice }}
+                {{ $pages = $pages | append . }}
+                {{ $archiveMap = merge $archiveMap (dict $monthKey $pages) }}
+              {{ end }}
+              
+              {{/* Display months in reverse chronological order */}}
+              {{ $monthKeys := slice }}
+              {{ range $monthKey, $pages := $archiveMap }}
+                {{ $monthKeys = $monthKeys | append $monthKey }}
+              {{ end }}
+              {{ $sortedMonths := sort $monthKeys }}
+              {{ $reversedMonths := slice }}
+              {{ range $i := seq (sub (len $sortedMonths) 1) 0 }}
+                {{ $reversedMonths = $reversedMonths | append (index $sortedMonths $i) }}
+              {{ end }}
+              {{ range $reversedMonths }}
+                {{ $monthKey := . }}
+                {{ $pages := index $archiveMap $monthKey }}
+                {{ $firstPage := index $pages 0 }}
+                {{ $customDate := partial "extract-date.html" $firstPage }}
+                {{ $displayDate := "" }}
+                {{ if $customDate }}
+                  {{ $cleanDate := trim $customDate " \n\t" }}
+                  {{ $parsedDate := time $cleanDate }}
+                  {{ $displayDate = $parsedDate.Format "2006年1月" }}
+                {{ else }}
+                  {{ $displayDate = $firstPage.Date.Format "2006年1月" }}
+                {{ end }}
+                <div class="flex items-center justify-between py-1 text-left text-sm hover:text-gray-600">
+                  <a href="/months/{{ $monthKey }}/" class="text-gray-700 hover:text-gray-600 archive-link" data-month="{{ $monthKey }}" onclick="handleMonthClick(event, '{{ $monthKey }}')">
+                    {{ $displayDate }}
+                  </a>
+                  <span class="text-gray-500 text-xs">({{ len $pages }})</span>
+                </div>
               {{ end }}
             </div>
           </div>
