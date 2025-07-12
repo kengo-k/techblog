@@ -1,9 +1,6 @@
 ---
 title: "JavaScript async/awaitの基本"
-draft: false
 tags: ["React", "JavaScript", "Web"]
-categories: ["技術"]
-months: ["2024-10"]
 description: "JavaScript async/awaitの基本的な使い方と非同期処理について解説します。"
 ---
 

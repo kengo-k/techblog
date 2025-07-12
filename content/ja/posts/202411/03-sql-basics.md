@@ -1,9 +1,6 @@
 ---
 title: "SQL基本操作ガイド"
-draft: false
 tags: ["React", "JavaScript", "Web"]
-categories: ["技術"]
-months: ["2024-11"]
 description: "SQLの基本的な操作方法とデータベースクエリについて解説します。"
 ---
 

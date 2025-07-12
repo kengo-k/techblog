@@ -1,9 +1,6 @@
 ---
 title: "Tailwind CSSのカスタムコンポーネント設計"
-draft: false
 tags: ["React", "JavaScript", "Web"]
-categories: ["技術"]
-months: ["2024-10"]
 description: "Tailwind CSSを使用したコンポーネント設計のベストプラクティス、再利用可能なコンポーネントの作成方法と設計思想..."
 ---
 

@@ -66,8 +66,9 @@
           <h3 class="text-sm font-medium text-gray-900 mb-4">{{ i18n "archives_heading" }}</h3>
           <div class="space-y-1">
             {{/* Custom archive generation using path-based dates */}}
+            {{ $allPages := where (where .Site.RegularPages "Layout" "ne" "search") "Params.searchHidden" "ne" true }}
             {{ $monthMap := dict }}
-            {{ range .Site.RegularPages }}
+            {{ range $allPages }}
               {{ $partialDate := (partial "extract-date.html" . | plainify | printf "%s") }}
               {{ $dateStr := (cond (ne $partialDate "") $partialDate (.Date.Format "2006-01-02")) }}
               {{ $postDate := time $dateStr }}

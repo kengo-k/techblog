@@ -1,9 +1,6 @@
 ---
 title: "TypeScriptの型安全性を活用したAPI設計"
-draft: false
 tags: ["React", "JavaScript", "Web"]
-categories: ["技術"]
-months: ["2024-10"]
 description: "TypeScriptを使用したAPI設計を行う際の型安全性の確保について、zodやtRPCなどのツールを活用した実装方法..."
 ---
 

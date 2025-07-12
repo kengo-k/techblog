@@ -1,9 +1,6 @@
 ---
 title: "Docker基本操作ガイド"
-draft: false
 tags: ["React", "JavaScript", "Web"]
-categories: ["技術"]
-months: ["2024-11"]
 description: "Dockerの基本的な操作方法とコンテナ化の基礎について解説します。"
 ---
 

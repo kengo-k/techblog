@@ -1,7 +1,7 @@
 ---
-Title: "Using the codefile shortcode"
-Description: "Embed real source code into your post at build time"
-Tags: ["Hugo", "Shortcode", "Go"]
+title: "Using the codefile shortcode"
+tags: ["Hugo", "Shortcode", "Go"]
+description: "Embed real source code into your post at build time"
 ---
 
 This post demonstrates how to embed actual repository code into a Hugo article using the `codefile` shortcode.

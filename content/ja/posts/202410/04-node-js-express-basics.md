@@ -1,9 +1,6 @@
 ---
 title: "Node.js Expressの基本"
-draft: false
 tags: ["React", "JavaScript", "Web"]
-categories: ["技術"]
-months: ["2024-10"]
 description: "Node.js Expressフレームワークの基本的な使い方とWebアプリケーションの構築方法について解説します。"
 ---
 

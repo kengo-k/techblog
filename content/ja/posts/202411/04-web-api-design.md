@@ -1,9 +1,6 @@
 ---
 title: "Web API設計のベストプラクティス"
-draft: false
 tags: ["React", "JavaScript", "Web"]
-categories: ["技術"]
-months: ["2024-11"]
 description: "RESTful APIの設計原則とベストプラクティスについて解説します。"
 ---
 

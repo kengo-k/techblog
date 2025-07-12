@@ -1,9 +1,6 @@
 ---
 title: "Next.js App Routerでの認証実装パターン"
-draft: false
 tags: ["React", "JavaScript", "Web"]
-categories: ["技術"]
-months: ["2024-09"]
 description: "Next.js App Routerを使用した認証システムの実装について、NextAuthやSupabaseを活用したパターンを紹介..."
 ---
 

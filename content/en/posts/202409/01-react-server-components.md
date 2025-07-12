@@ -1,9 +1,6 @@
 ---
 title: "Understanding React Server Components"
-draft: false
 tags: ["React", "JavaScript", "Web"]
-categories: ["技術"]
-months: ["2024-09"]
 description: "React Server Components are components rendered on the server. Unlike traditional client-side rendering, they run on the server, reducing initial load times and improving SEO."
 ---
 

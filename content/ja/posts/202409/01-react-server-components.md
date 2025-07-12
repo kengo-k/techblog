@@ -1,9 +1,6 @@
 ---
 title: "React Server Componentsの基本概念と実装方法"
-draft: false
 tags: ["React", "JavaScript", "Web"]
-categories: ["技術"]
-months: ["2024-09"]
 description: "React Server Componentsは、サーバーサイドレンダリングされるコンポーネントです。従来のクライアントサイドレンダリングとは異なり..."
 ---
 

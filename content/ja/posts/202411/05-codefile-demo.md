@@ -1,7 +1,7 @@
 ---
-Title: "codefile ショートコードの使い方"
-Description: "実際のソースコードをビルド時に取り込む方法を紹介"
-Tags: ["Hugo", "Shortcode", "Go"]
+title: "codefile ショートコードの使い方"
+tags: ["Hugo", "Shortcode", "Go"]
+description: "実際のソースコードをビルド時に取り込む方法を紹介"
 ---
 
 この記事では、`codefile` ショートコードを使って実際のリポジトリ内コードを記事内に展開する方法を説明します。

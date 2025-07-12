@@ -1,9 +1,6 @@
 ---
 title: "Git基本ワークフロー"
-draft: false
 tags: ["React", "JavaScript", "Web"]
-categories: ["技術"]
-months: ["2024-11"]
 description: "Gitの基本的なワークフローとバージョン管理について解説します。。"
 ---
 
