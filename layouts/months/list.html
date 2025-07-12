@@ -4,13 +4,23 @@
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
       <!-- Main Content -->
       <main class="lg:col-span-3">
+        {{/* ---- derive pages for this month from site, independent of taxonomy ---- */}}
+        {{ $monthKey := .Title }}
+        {{ $monthPages := slice }}
+        {{ range .Site.RegularPages }}
+          {{ $dStr := (partial "extract-date.html" . | plainify | printf "%s") }}
+          {{ $d := time $dStr }}
+          {{ if eq ($d.Format "2006-01") $monthKey }}
+            {{ $monthPages = $monthPages | append . }}
+          {{ end }}
+        {{ end }}
         <!-- Tag Title -->
         <div class="mb-8">
           <h1 class="text-2xl font-medium text-gray-900 mb-2">{{ .Title }}</h1>
-          <p class="text-gray-600 text-sm">{{ i18n "post_count" (dict "Count" (.Pages | len)) }}</p>
+          <p class="text-gray-600 text-sm">{{ i18n "post_count" (dict "Count" ($monthPages | len)) }}</p>
         </div>
 
-        {{ $paginator := .Paginate .Pages }}
+        {{ $paginator := .Paginate $monthPages }}
         {{ range $paginator.Pages }}
         {{ $partialDate := (partial "extract-date.html" . | plainify | printf "%s") }}
         {{ $dateStr := (cond (ne $partialDate "") $partialDate (.Date.Format "2006-01-02")) }}
