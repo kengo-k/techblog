@@ -55,7 +55,7 @@
     }
   </style>
 
-{{/* Search page assets */}}
+{{/* Search page assets - disabled in favor of custom enhanced search
 {{- if eq .Layout "search" }}
   <link rel="preload" as="fetch" href="{{ "/index.json" | relLangURL }}">
   {{- $fuse := resources.Get "js/fuse.basic.min.js" }}
@@ -63,3 +63,4 @@
   {{- $search := (slice $fuse $fast) | resources.Concat "assets/js/search.js" | resources.Minify }}
   <script defer src="{{ $search.RelPermalink }}"></script>
 {{- end }}
+*/}}

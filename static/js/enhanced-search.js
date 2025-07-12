@@ -176,7 +176,8 @@ function updateClearFiltersVisibility() {
 
 // Setup event listeners
 function setupEventListeners() {
-    searchInput.addEventListener('input', debounce(performSearch, 300));
+    const debouncedSearch = debounce(performSearch, 600);
+    searchInput.addEventListener('input', debouncedSearch);
     if (clearFiltersBtn) {
         clearFiltersBtn.addEventListener('click', clearAllFilters);
     }
@@ -205,8 +206,12 @@ function performSearch() {
     if (query) {
         const fuseResults = fuseInstance.search(query);
         results = fuseResults.map(result => result.item);
-    } else {
+    } else if (selectedTag || selectedMonth) {
+        // Only show all data if filters are applied
         results = searchData;
+    } else {
+        // No query and no filters - show nothing
+        results = [];
     }
     
     // Apply filters
@@ -242,35 +247,26 @@ function displayResults(results, query) {
     
     const resultsHTML = results.map(post => {
         const title = highlightText(post.title, query);
-        const summary = highlightText(post.summary || '', query);
-        const excerpt = getExcerpt(post.content, query);
+        const url = new URL(post.permalink).pathname;
+        const excerpt = getSearchExcerpt(post.content, query, 120);
         const tags = extractTags(post);
         
         return `
-            <article class="border-b border-gray-100 pb-6 mb-6 last:border-b-0">
-                <div class="flex gap-6">
-                    <div class="w-48 flex-shrink-0">
-                        <div class="w-full h-32 bg-gray-200 rounded flex items-center justify-center">
-                            <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="flex-1">
-                        <a href="${post.permalink}" class="block">
-                            <h2 class="text-xl font-medium mb-3 text-gray-900 hover:text-gray-600 transition-colors">
-                                ${title}
-                            </h2>
-                        </a>
-                        <p class="text-gray-600 text-sm mb-2 line-clamp-2">${summary}</p>
-                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">${excerpt}</p>
-                        <div class="flex items-center justify-between text-xs text-gray-500">
-                            <div class="flex gap-2">
-                                ${tags.slice(0, 3).map(tag => `<span class="bg-gray-100 px-2 py-1 rounded">${tag}</span>`).join('')}
-                            </div>
+            <article class="mb-6 pb-4 border-b border-gray-100 last:border-b-0">
+                <div class="max-w-none">
+                    <a href="${post.permalink}" class="block group">
+                        <h3 class="text-lg font-medium text-gray-900 hover:underline mb-1 group-hover:text-gray-700">
+                            ${title}
+                        </h3>
+                        <div class="text-gray-500 text-sm mb-2">${url}</div>
+                        <p class="text-gray-700 text-sm line-height-relaxed mb-2">
+                            ${excerpt}
+                        </p>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
                             <span>${formatDate(post.permalink)}</span>
+                            ${tags.slice(0, 2).map(tag => `<span class="bg-gray-100 px-2 py-1 rounded">${tag}</span>`).join('')}
                         </div>
-                    </div>
+                    </a>
                 </div>
             </article>
         `;
@@ -287,12 +283,12 @@ function highlightText(text, query) {
     return text.replace(regex, '<mark class="bg-yellow-200 px-1">$1</mark>');
 }
 
-// Get excerpt with highlighted search term
-function getExcerpt(content, query, maxLength = 150) {
+// Get search excerpt with highlighted search term (Google-style)
+function getSearchExcerpt(content, query, maxLength = 120) {
     if (!content) return '';
     
     // Remove HTML tags
-    const plainText = content.replace(/<[^>]*>/g, '');
+    const plainText = content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
     
     if (!query) {
         return plainText.substring(0, maxLength) + (plainText.length > maxLength ? '...' : '');
@@ -304,34 +300,66 @@ function getExcerpt(content, query, maxLength = 150) {
     const index = lowerContent.indexOf(lowerQuery);
     
     if (index === -1) {
+        // If no match found, return first part
         return plainText.substring(0, maxLength) + (plainText.length > maxLength ? '...' : '');
     }
     
-    // Extract around the found term
-    const start = Math.max(0, index - 50);
-    const end = Math.min(plainText.length, index + query.length + 100);
+    // Calculate excerpt bounds around the search term
+    const halfLength = Math.floor((maxLength - query.length) / 2);
+    let start = Math.max(0, index - halfLength);
+    let end = Math.min(plainText.length, index + query.length + halfLength);
+    
+    // Adjust if we're at the beginning or end
+    if (start === 0) {
+        end = Math.min(plainText.length, maxLength);
+    } else if (end === plainText.length) {
+        start = Math.max(0, plainText.length - maxLength);
+    }
+    
+    // Try to break at word boundaries
+    if (start > 0) {
+        const nextSpace = plainText.indexOf(' ', start);
+        if (nextSpace !== -1 && nextSpace - start < 20) {
+            start = nextSpace + 1;
+        }
+    }
+    
+    if (end < plainText.length) {
+        const prevSpace = plainText.lastIndexOf(' ', end);
+        if (prevSpace !== -1 && end - prevSpace < 20) {
+            end = prevSpace;
+        }
+    }
+    
     let excerpt = plainText.substring(start, end);
     
+    // Add ellipsis
     if (start > 0) excerpt = '...' + excerpt;
     if (end < plainText.length) excerpt += '...';
     
     return highlightText(excerpt, query);
 }
 
-// Format date from permalink
+// Get excerpt with highlighted search term (legacy function for compatibility)
+function getExcerpt(content, query, maxLength = 150) {
+    return getSearchExcerpt(content, query, maxLength);
+}
+
+// Format date from permalink (full date)
 function formatDate(permalink) {
-    const match = permalink.match(/(\d{4})(\d{2})/);
+    const match = permalink.match(/(\d{4})(\d{2})\/(\d{2})/);
     if (match) {
         const year = match[1];
         const month = match[2];
+        const day = match[3];
         const isEnglish = document.documentElement.lang === 'en' || window.location.pathname.includes('/en/');
         
         if (isEnglish) {
-            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
-                              'July', 'August', 'September', 'October', 'November', 'December'];
-            return `${monthNames[parseInt(month) - 1]} ${year}`;
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                              'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${monthNames[parseInt(month) - 1]} ${parseInt(day)}, ${year}`;
         } else {
-            return `${year}年${parseInt(month)}月`;
+            return `${year}年${parseInt(month)}月${parseInt(day)}日`;
         }
     }
     return '';
