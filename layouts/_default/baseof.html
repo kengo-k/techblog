@@ -9,6 +9,11 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Winky+Rough:wght@400&text={{ .Site.Title | urlquery }}&display=swap" rel="stylesheet">
+
     {{ partial "extend_head.html" . }}
 
     <!-- Custom CSS -->
@@ -97,6 +102,13 @@
         .container {
             max-width: 1200px;
         }
+
+        .winky-rough {
+            font-family: "Winky Rough", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
+        }
     </style>
 </head>
 <body class="bg-white flex flex-col min-h-screen">
@@ -122,7 +134,7 @@
         </a>
 
         <div class="text-center">
-          <h1 class="labrada-regular text-3xl font-light text-gray-900 mb-2">
+          <h1 class="winky-rough text-3xl font-light text-gray-900 mb-2">
             <a href="{{ "/" | relLangURL }}" class="hover:text-gray-600 transition-colors">
               {{ .Site.Title }}
             </a>
