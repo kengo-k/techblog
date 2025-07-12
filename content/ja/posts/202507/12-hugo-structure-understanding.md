@@ -26,7 +26,7 @@ Hugo は URL に応じて自動的に適切なテンプレートを選択する�
 
 Hugo にはタクソノミー（Taxonomy）という記事を分類・整理するための仕組みがある（要するにタグやカテゴリのこと）。設定ファイル（`hugo.toml`）で、どんな分類を使うかを定義できる：
 
-```toml
+```text
 [taxonomies]
 tag = 'tags'
 category = 'categories'
@@ -34,7 +34,7 @@ category = 'categories'
 
 左側が frontmatter で使う単数形のキー名で、右側が実際の URL やディレクトリ名になる複数形。ちょっとややこしいんですが、Hugo の仕様なので慣れるしかない。記事の frontmatter では、こんな感じで分類を指定する：
 
-```yaml
+```text
 tags: ["Hugo", "Web開発"]
 categories: ["技術メモ"]
 ```
@@ -54,13 +54,13 @@ categories: ["技術メモ"]
 
 `baseof.html` の中を見ると、このような記述がある：
 
-```html
+```text
 <main>{{ block "main" . }}{{ end }}</main>
 ```
 
 この `{{ block "main" . }}{{ end }}` が、各ページ固有のコンテンツを挿入するためのスロットでスロット名として main を使うと宣言している。そして、例えば TOP ページのテンプレート `index.html` を見ると：
 
-```go
+```text
 {{ define "main" }}
 ...TOPページの内容...
 {{ end }}
@@ -72,7 +72,7 @@ categories: ["技術メモ"]
 
 テンプレートには、もう一つ便利な機能がある。`partial` という共通で使い回したいテンプレートを切り出すための仕組みである。
 
-```go
+```text
 {{ partial "head.html" . }}
 ```
 
@@ -84,19 +84,19 @@ Hugo にはショートコードという便利な機能がある。これはマ
 
 例えば、YouTube 動画を埋め込みたい場合：
 
-```markdown
+```text
 {{</* youtube "動画ID" */>}}
 ```
 
 図表を挿入したい場合：
 
-```markdown
+```text
 {{</* figure src="image.jpg" title="図のタイトル" */>}}
 ```
 
 ショートコードは `layouts/shortcodes/` ディレクトリにテンプレートファイルを配置することで、独自のものを作成することもできる。例えば `layouts/shortcodes/note.html` を作れば：
 
-```markdown
+```text
 {{</* note */>}}
 ここに注意書きの内容
 {{</* /note */>}}
