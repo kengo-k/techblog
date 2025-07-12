@@ -54,3 +54,12 @@
       padding-bottom: 0;
     }
   </style>
+
+{{/* Search page assets */}}
+{{- if eq .Layout "search" }}
+  <link rel="preload" as="fetch" href="{{ "/index.json" | relLangURL }}">
+  {{- $fuse := resources.Get "js/fuse.basic.min.js" }}
+  {{- $fast := resources.Get "js/fastsearch.js" | js.Build (dict "params" (dict "fuseOpts" site.Params.fuseOpts)) }}
+  {{- $search := (slice $fuse $fast) | resources.Concat "assets/js/search.js" | resources.Minify }}
+  <script defer src="{{ $search.RelPermalink }}"></script>
+{{- end }}

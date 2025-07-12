@@ -27,32 +27,70 @@
   {{- end }}
 </header>
 
-{{- $pages := where site.RegularPages "Type" "in" site.Params.mainSections }}
+{{/* TOPページと完全に同じロジックを使用 */}}
+{{ $allPages := where (where .Site.RegularPages "Layout" "ne" "search") "Params.searchHidden" "ne" true }}
+{{ $monthMap := dict }}
+{{ range $allPages }}
+  {{ $partialDate := (partial "extract-date.html" . | plainify | printf "%s") }}
+  {{ $dateStr := (cond (ne $partialDate "") $partialDate (.Date.Format "2006-01-02")) }}
+  {{ $postDate := time $dateStr }}
+  {{ $monthKey := $postDate.Format "2006-01" }}
+  {{ $pages := index $monthMap $monthKey | default slice }}
+  {{ $pages = $pages | append . }}
+  {{ $monthMap = merge $monthMap (dict $monthKey $pages) }}
+{{ end }}
 
-{{- if site.Params.ShowAllPagesInArchive }}
-{{- $pages = site.RegularPages }}
-{{- end }}
+{{/* 年別に月情報をまとめる */}}
+{{ $yearMap := dict }}
+{{ range $monthKey, $monthPages := $monthMap }}
+  {{ $year := substr $monthKey 0 4 }}
+  {{ $monthDict := index $yearMap $year | default dict }}
+  {{ $monthDict = merge $monthDict (dict $monthKey $monthPages) }}
+  {{ $yearMap = merge $yearMap (dict $year $monthDict) }}
+{{ end }}
 
-{{- range $pages.GroupByPublishDate "2006" }}
-{{- if ne .Key "0001" }}
+{{/* 年キーをソート (新しい順) */}}
+{{ $years := slice }}
+{{ range $year, $_ := $yearMap }}
+  {{ $years = $years | append $year }}
+{{ end }}
+{{ $sortedYears := sort $years }}
+
+{{- range $i := seq (sub (len $sortedYears) 1) 0 }}
+  {{ $year := index $sortedYears $i }}
+  {{ $monthsDict := index $yearMap $year }}
+  {{ $monthKeys := slice }}
+  {{ range $monthKey, $_ := $monthsDict }}
+    {{ $monthKeys = $monthKeys | append $monthKey }}
+  {{ end }}
+  {{ $sortedMonths := sort $monthKeys }}
+  
 <div class="archive-year">
-  {{- $year := replace .Key "0001" "" }}
   <h2 class="archive-year-header" id="{{ $year }}">
     <a class="archive-header-link" href="#{{ $year }}">
       {{- $year -}}
     </a>
-    <sup class="archive-count">&nbsp;{{ len .Pages }}</sup>
+    <sup class="archive-count">&nbsp;{{ $totalPagesCount := 0 }}{{ range $monthKey := $sortedMonths }}{{ $monthPages := index $monthsDict $monthKey }}{{ $totalPagesCount = add $totalPagesCount (len $monthPages) }}{{ end }}{{ $totalPagesCount }}</sup>
   </h2>
-  {{- range .Pages.GroupByDate "January" }}
+  
+  {{- range $j := seq (sub (len $sortedMonths) 1) 0 }}
+    {{ $monthKey := index $sortedMonths $j }}
+    {{ $monthPages := index $monthsDict $monthKey }}
+    {{ $firstPage := index $monthPages 0 }}
+    {{ $partialDate := (partial "extract-date.html" $firstPage | plainify | printf "%s") }}
+    {{ $dateStr := (cond (ne $partialDate "") $partialDate ($firstPage.Date.Format "2006-01-02")) }}
+    {{ $parsedDate := time $dateStr }}
+    {{ $monthName := $parsedDate.Format "January" }}
+    
   <div class="archive-month">
-    <h3 class="archive-month-header" id="{{ $year }}-{{ .Key }}">
-      <a class="archive-header-link" href="#{{ $year }}-{{ .Key }}">
-        {{- .Key -}}
+    <h3 class="archive-month-header" id="{{ $year }}-{{ $monthName }}">
+      <a class="archive-header-link" href="#{{ $year }}-{{ $monthName }}">
+        {{- $monthName -}}
       </a>
-      <sup class="archive-count">&nbsp;{{ len .Pages }}</sup>
+      <sup class="archive-count">&nbsp;{{ len $monthPages }}</sup>
     </h3>
     <div class="archive-posts">
-      {{- range .Pages }}
+      {{- range $monthPages }}
       {{- if eq .Kind "page" }}
       <div class="archive-entry">
         <h3 class="archive-entry-title entry-hint-parent">
@@ -77,7 +115,6 @@
   </div>
   {{- end }}
 </div>
-{{- end }}
 {{- end }}
 
 {{- end }}{{/* end main */}}

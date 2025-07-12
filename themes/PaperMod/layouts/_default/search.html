@@ -1,29 +1,118 @@
 {{- define "main" }}
+<div class="bg-white">
+    <div class="container mx-auto px-4 py-12">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-2">
+                {{- .Title -}}
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </h1>
+        </header>
 
-<header class="page-header">
-    <h1>{{- (printf "%s&nbsp;" .Title ) | htmlUnescape -}}
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-    </h1>
-    {{- if .Description }}
-    <div class="post-description">
-        {{ .Description }}
-    </div>
-    {{- end }}
-    {{- if not (.Param "hideMeta") }}
-    <div class="post-meta">
-        {{- partial "translation_list.html" . -}}
-    </div>
-    {{- end }}
-</header>
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
+            <!-- Main Content -->
+            <main class="lg:col-span-3">
+                <!-- Search Input -->
+                <div class="mb-8">
+                    <input id="searchInput" autofocus placeholder="{{ .Params.placeholder | default (printf "%s ↵" .Title) }}"
+                        aria-label="search" type="search" autocomplete="off" maxlength="64" 
+                        class="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                
+                <!-- Clear Filters Button -->
+                <div id="clearFilters" class="mb-6" style="display: none;">
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">
+                        {{ if eq .Site.Language.Lang "en" }}Clear Filters{{ else }}フィルターをクリア{{ end }}
+                    </button>
+                </div>
+                
+                <!-- Search Results -->
+                <div id="searchResults" class="space-y-6" aria-label="search results"></div>
+                <div id="noResults" class="text-center py-12 text-gray-500" style="display: none;">
+                    <p class="text-lg">{{ if eq .Site.Language.Lang "en" }}No search results found.{{ else }}検索結果が見つかりませんでした。{{ end }}</p>
+                </div>
+            </main>
 
-<div id="searchbox">
-    <input id="searchInput" autofocus placeholder="{{ .Params.placeholder | default (printf "%s ↵" .Title) }}"
-        aria-label="search" type="search" autocomplete="off" maxlength="64">
-    <ul id="searchResults" aria-label="search results"></ul>
+            <!-- Sidebar -->
+            <aside class="lg:col-span-1">
+                <div class="space-y-8">
+                    <!-- Advertisement Area 1 -->
+                    <div class="h-48 bg-gray-50 border border-gray-200 rounded flex items-center justify-center">
+                        <span class="text-gray-400 text-xs">{{ if eq .Site.Language.Lang "en" }}Advertisement{{ else }}広告{{ end }}</span>
+                    </div>
+
+                    <!-- Tag List -->
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-900 mb-4">{{ if eq .Site.Language.Lang "en" }}Tags{{ else }}タグ{{ end }}</h3>
+                        <div class="flex flex-wrap gap-2 mb-2">
+                            {{ range .Site.Taxonomies.tags.ByCount }}
+                            <a href="#" class="px-2 py-1 bg-gray-100 rounded text-xs text-gray-700 hover:bg-gray-200 cursor-pointer tag-filter" 
+                               data-tag="{{ .Page.Title }}" onclick="filterByTag('{{ .Page.Title }}'); return false;">
+                                {{ .Page.Title }} <span class="text-gray-500">({{ .Count }})</span>
+                            </a>
+                            {{ end }}
+                        </div>
+                        <div class="text-right">
+                            <a href="{{ "/tags/" | relLangURL }}" class="text-sm text-gray-500 hover:text-gray-700">{{ if eq .Site.Language.Lang "en" }}View all tags{{ else }}すべてのタグを見る{{ end }}</a>
+                        </div>
+                    </div>
+
+                    <!-- Archive List -->
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-900 mb-4">{{ if eq .Site.Language.Lang "en" }}Archives{{ else }}月別アーカイブ{{ end }}</h3>
+                        <div class="space-y-1">
+                            {{/* Custom archive generation using path-based dates */}}
+                            {{ $allPages := where (where .Site.RegularPages "Layout" "ne" "search") "Params.searchHidden" "ne" true }}
+                            {{ $monthMap := dict }}
+                            {{ range $allPages }}
+                              {{ $partialDate := (partial "extract-date.html" . | plainify | printf "%s") }}
+                              {{ $dateStr := (cond (ne $partialDate "") $partialDate (.Date.Format "2006-01-02")) }}
+                              {{ $postDate := time $dateStr }}
+                              {{ $monthKey := $postDate.Format "2006-01" }}
+                              {{ $pages := index $monthMap $monthKey | default slice }}
+                              {{ $pages = $pages | append . }}
+                              {{ $monthMap = merge $monthMap (dict $monthKey $pages) }}
+                            {{ end }}
+                            {{ $monthKeys := slice }}
+                            {{ range $month, $pages := $monthMap }}
+                              {{ $monthKeys = $monthKeys | append $month }}
+                            {{ end }}
+                            {{ $sortedMonths := sort $monthKeys }}
+                            {{ range $i := seq (sub (len $sortedMonths) 1) 0 }}
+                              {{ $monthKey := index $sortedMonths $i }}
+                              {{ $pages := index $monthMap $monthKey }}
+                              {{ $firstPage := index $pages 0 }}
+                              {{ $partialDate := (partial "extract-date.html" $firstPage | plainify | printf "%s") }}
+                              {{ $dateStr := (cond (ne $partialDate "") $partialDate ($firstPage.Date.Format "2006-01-02")) }}
+                              {{ $parsedDate := time $dateStr }}
+                              {{ $displayDate := cond (eq $.Site.Language.Lang "en") ($parsedDate.Format "January 2006") ($parsedDate.Format "2006年1月") }}
+                              <div class="flex items-center justify-between py-1 text-left text-sm hover:text-gray-600 cursor-pointer month-filter" 
+                                   data-month="{{ $monthKey }}" onclick="filterByMonth('{{ $monthKey }}'); return false;">
+                                <span class="text-gray-700 hover:text-gray-600">{{ $displayDate }}</span>
+                                <span class="text-gray-500 text-xs">({{ len $pages }})</span>
+                              </div>
+                            {{ end }}
+                        </div>
+                        <div class="text-right mt-2">
+                            <a href="{{ "/archives/" | relLangURL }}" class="text-sm text-gray-500 hover:text-gray-700">{{ if eq .Site.Language.Lang "en" }}View all archives{{ else }}すべてのアーカイブを見る{{ end }}</a>
+                        </div>
+                    </div>
+
+                    <!-- Advertisement Area 2 -->
+                    <div class="h-48 bg-gray-50 border border-gray-200 rounded flex items-center justify-center">
+                        <span class="text-gray-400 text-xs">{{ if eq .Site.Language.Lang "en" }}Advertisement{{ else }}広告{{ end }}</span>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
 </div>
+
+<!-- Enhanced Search Scripts -->
+<script src="{{ "js/enhanced-search.js" | relURL }}"></script>
 
 {{- end }}{{/* end main */}}

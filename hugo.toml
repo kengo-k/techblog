@@ -68,7 +68,6 @@ Content = '技術情報とプログラミング'
 [taxonomies]
 tag = 'tags'
 category = 'categories'
-month = 'months'
 
 [frontmatter]
 date = ["date", ":fileModTime"]
@@ -81,3 +80,9 @@ date = ["date", ":fileModTime"]
     noClasses = false
     style = "github"
     lineNos = false
+
+[outputs]
+home = ["HTML", "RSS", "JSON"]
+
+[params.fuseOpts]
+limit = 10

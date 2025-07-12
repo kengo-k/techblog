@@ -98,6 +98,13 @@
                 {{- $lang := .Lang}}
                 {{- $separator := or $label_text (not site.Params.disableThemeToggle)}}
                 {{- with site.Home.Translations }}
+                <!-- Search icon link (always visible) -->
+                <a href="{{ "/search/" | relLangURL }}" class="mr-3" aria-label="Search" title="Search">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </a>
                 <ul class="lang-switch">
                     {{- if $separator }}<li>|</li>{{ end }}
                     {{- range . -}}

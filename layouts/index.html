@@ -4,14 +4,14 @@
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
       <!-- Main Content -->
       <main class="lg:col-span-3">
-        {{ $paginator := .Paginate .Site.RegularPages }}
+        {{ $paginator := .Paginate (where (where .Site.RegularPages "Layout" "ne" "search") "Params.searchHidden" "ne" true) }}
         {{ range $paginator.Pages }}
         {{/* Extract date from file path or fallback to .Date */}}
         {{ $partialDate := (partial "extract-date.html" . | plainify | printf "%s") }}
         {{ $dateStr := (cond (ne $partialDate "") $partialDate (.Date.Format "2006-01-02")) }}
         {{ $postDate := time $dateStr }}
         {{ $dataMonth := $postDate.Format "2006-01" }}
-        <article class="border-b border-gray-100 pb-8 mb-8 last:border-b-0 blog-post" data-month="{{ $dataMonth }}" data-tags="{{ delimit .Params.tags "," }}">
+        <article class="border-b border-gray-100 pb-8 mb-8 last:border-b-0 blog-post" data-month="{{ $dataMonth }}" data-tags="{{ if .Params.tags }}{{ delimit .Params.tags "," }}{{ end }}">
           <div class="flex gap-6">
             <div class="w-48 flex-shrink-0">
               <div class="w-full h-32 bg-gray-200 rounded flex items-center justify-center">
@@ -101,8 +101,9 @@
             <h3 class="text-sm font-medium text-gray-900 mb-4">{{ i18n "archives_heading" }}</h3>
             <div class="space-y-1">
               {{/* Custom archive generation using path-based dates */}}
+              {{ $allPages := where (where .Site.RegularPages "Layout" "ne" "search") "Params.searchHidden" "ne" true }}
               {{ $monthMap := dict }}
-              {{ range .Site.RegularPages }}
+              {{ range $allPages }}
                 {{ $partialDate := (partial "extract-date.html" . | plainify | printf "%s") }}
                 {{ $dateStr := (cond (ne $partialDate "") $partialDate (.Date.Format "2006-01-02")) }}
                 {{ $postDate := time $dateStr }}

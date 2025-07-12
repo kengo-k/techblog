@@ -19,7 +19,7 @@
       {{ $monthMap = merge $monthMap (dict $mKey $pages) }}
     {{ end }}
 
-    {{/* 月キーをソート (新しい順) */}}
+    {{/* ソート (新しい順) */}}
     {{ $keys := slice }}
     {{ range $k, $_ := $monthMap }}
       {{ $keys = $keys | append $k }}

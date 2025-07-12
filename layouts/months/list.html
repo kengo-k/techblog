@@ -7,8 +7,10 @@
         {{/* ---- derive pages for this month from site, independent of taxonomy ---- */}}
         {{ $monthKey := .Title }}
         {{ $monthPages := slice }}
-        {{ range .Site.RegularPages }}
-          {{ $dStr := (partial "extract-date.html" . | plainify | printf "%s") }}
+        {{ $sourcePages := where (where .Site.RegularPages "Layout" "ne" "search") "Params.searchHidden" "ne" true }}
+        {{ range $sourcePages }}
+          {{ $raw := (partial "extract-date.html" . | plainify | printf "%s") }}
+          {{ $dStr := (cond (ne $raw "") $raw (.Date.Format "2006-01-02")) }}
           {{ $d := time $dStr }}
           {{ if eq ($d.Format "2006-01") $monthKey }}
             {{ $monthPages = $monthPages | append . }}
@@ -114,7 +116,7 @@
             <div class="space-y-1">
               {{/* custom archive, same as index */}}
               {{ $monthMap := dict }}
-              {{ range .Site.RegularPages }}
+              {{ range $sourcePages }}
                 {{ $pDateStr := (partial "extract-date.html" . | plainify | printf "%s") }}
                 {{ $dStr := (cond (ne $pDateStr "") $pDateStr (.Date.Format "2006-01-02")) }}
                 {{ $pDate := time $dStr }}
