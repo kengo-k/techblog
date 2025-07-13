@@ -23,14 +23,10 @@
     <div>
       <h3 class="text-sm font-medium text-gray-900 mb-4">{{ i18n "archives_heading" }}</h3>
       <div class="space-y-1">
-        {{/* Custom archive generation using path-based dates */}}
         {{ $allPages := where (where .Site.RegularPages "Layout" "ne" "search") "Params.searchHidden" "ne" true }}
         {{ $monthMap := dict }}
         {{ range $allPages }}
-          {{ $partialDate := (partial "extract-date.html" . | plainify | printf "%s") }}
-          {{ $dateStr := (cond (ne $partialDate "") $partialDate (.Date.Format "2006-01-02")) }}
-          {{ $postDate := time $dateStr }}
-          {{ $monthKey := $postDate.Format "2006-01" }}
+          {{ $monthKey := .Date.Format "200601" }}
           {{ $pages := index $monthMap $monthKey | default slice }}
           {{ $pages = $pages | append . }}
           {{ $monthMap = merge $monthMap (dict $monthKey $pages) }}
@@ -44,12 +40,9 @@
           {{ $monthKey := index $sortedMonths $i }}
           {{ $pages := index $monthMap $monthKey }}
           {{ $firstPage := index $pages 0 }}
-          {{ $partialDate := (partial "extract-date.html" $firstPage | plainify | printf "%s") }}
-          {{ $dateStr := (cond (ne $partialDate "") $partialDate ($firstPage.Date.Format "2006-01-02")) }}
-          {{ $parsedDate := time $dateStr }}
-          {{ $displayDate := cond (eq $.Site.Language.Lang "en") ($parsedDate.Format "January 2006") ($parsedDate.Format "2006年1月") }}
+          {{ $displayDate := cond (eq $.Site.Language.Lang "en") ($firstPage.Date.Format "January 2006") ($firstPage.Date.Format "2006年1月") }}
           <div class="py-1 text-left text-sm hover:text-gray-600">
-            <a href="{{ (print "/archives/" $monthKey "/") | relLangURL }}" class="text-gray-700 hover:text-gray-600">
+            <a href="{{ (print "/posts/" $monthKey "/") | relLangURL }}" class="text-gray-700 hover:text-gray-600">
               {{ $displayDate }} ({{ len $pages }})
             </a>
           </div>

@@ -1,0 +1,66 @@
+{{- define "main" }}
+<div class="bg-white">
+  <div class="container mx-auto px-4 py-12">
+    <div class="mb-4">
+      <a href="{{ "/" | relLangURL }}" class="text-sm text-gray-500 hover:text-gray-700">{{ if eq .Site.Language.Lang "en" }}← Back to Home{{ else }}← ホームへ戻る{{ end }}</a>
+    </div>
+    <h1 class="text-2xl font-medium text-gray-900 mb-8">{{ .Title }}</h1>
+
+{{ $allPages := where (where .Site.RegularPages "Layout" "ne" "search") "Params.searchHidden" "ne" true }}
+{{ $monthMap := dict }}
+{{ range $allPages }}
+  {{ $monthKey := .Date.Format "200601" }}
+  {{ $pages := index $monthMap $monthKey | default slice }}
+  {{ $pages = $pages | append . }}
+  {{ $monthMap = merge $monthMap (dict $monthKey $pages) }}
+{{ end }}
+
+{{/* 年別に月情報をまとめる */}}
+{{ $yearMap := dict }}
+{{ range $monthKey, $monthPages := $monthMap }}
+  {{ $year := substr $monthKey 0 4 }}
+  {{ $monthDict := index $yearMap $year | default dict }}
+  {{ $monthDict = merge $monthDict (dict $monthKey $monthPages) }}
+  {{ $yearMap = merge $yearMap (dict $year $monthDict) }}
+{{ end }}
+
+{{/* 年をソート（新しい順） */}}
+{{ $yearKeys := slice }}
+{{ range $year, $months := $yearMap }}
+  {{ $yearKeys = $yearKeys | append $year }}
+{{ end }}
+{{ $sortedYears := sort $yearKeys }}
+
+{{/* 年別表示（新しい年から順番に） */}}
+{{ range $i := seq (sub (len $sortedYears) 1) 0 }}
+  {{ $year := index $sortedYears $i }}
+  {{ $monthDict := index $yearMap $year }}
+  
+    <div class="mb-4 flex items-center gap-4">
+      <h2 class="text-lg font-medium text-gray-900 flex-shrink-0">{{ $year }}{{ if eq $.Site.Language.Lang "en" }}{{ else }}年{{ end }}</h2>
+      <div class="flex flex-wrap gap-2">
+        {{ $monthKeys := slice }}
+        {{ range $monthKey, $pages := $monthDict }}
+          {{ $monthKeys = $monthKeys | append $monthKey }}
+        {{ end }}
+        {{ $sortedMonths := sort $monthKeys }}
+        {{ range $sortedMonths }}
+          {{ $monthKey := . }}
+          {{ $pages := index $monthDict $monthKey }}
+          {{ $firstPage := index $pages 0 }}
+          {{ $displayDate := cond (eq $.Site.Language.Lang "en") ($firstPage.Date.Format "January") ($firstPage.Date.Format "1月") }}
+          <a href="{{ (print "/posts/" $monthKey "/") | relLangURL }}" class="px-3 py-2 bg-gray-100 rounded text-sm text-gray-700 hover:bg-gray-200">
+            {{ $displayDate }} <span class="text-gray-500">({{ len $pages }})</span>
+          </a>
+        {{ end }}
+      </div>
+    </div>
+{{ end }}
+
+    <!-- Advertisement Area -->
+    <div class="h-48 mt-12 bg-gray-50 border border-gray-200 rounded flex items-center justify-center">
+      <span class="text-gray-400 text-xs">{{ if eq .Site.Language.Lang "en" }}Advertisement{{ else }}広告{{ end }}</span>
+    </div>
+  </div>
+</div>
+{{- end }}

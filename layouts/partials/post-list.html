@@ -1,10 +1,5 @@
 {{- $paginator := .paginator -}}
 {{ range $paginator.Pages }}
-{{/* Extract date from file path or fallback to .Date */}}
-{{ $partialDate := (partial "extract-date.html" . | plainify | printf "%s") }}
-{{ $dateStr := (cond (ne $partialDate "") $partialDate (.Date.Format "2006-01-02")) }}
-{{ $postDate := time $dateStr }}
-{{ $dataMonth := $postDate.Format "2006-01" }}
 <article class="border-b border-gray-100 pb-8 mb-8 last:border-b-0">
   <div class="flex gap-6">
     <div class="w-48 flex-shrink-0">
@@ -29,11 +24,7 @@
           </span>
           {{ end }}
         </div>
-        {{/* Display date derived from path */}}
-        {{ $partialDate := (partial "extract-date.html" . | plainify | printf "%s") }}
-        {{ $dateStr := (cond (ne $partialDate "") $partialDate (.Date.Format "2006-01-02")) }}
-        {{ $postDate := time $dateStr }}
-        <span>{{ cond (eq $.Site.Language.Lang "en") ($postDate.Format "January 2, 2006") ($postDate.Format "2006年1月2日") }}</span>
+        <span>{{ cond (eq site.Language.Lang "en") (.Date.Format "January 2, 2006") (.Date.Format "2006年1月2日") }}</span>
       </div>
     </div>
   </div>

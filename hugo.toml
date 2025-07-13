@@ -67,7 +67,6 @@ Content = '技術情報とプログラミング'
 
 [taxonomies]
 tag = 'tags'
-archive = 'archives'
 
 [frontmatter]
 date = ["date", ":fileModTime"]

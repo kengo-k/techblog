@@ -1,6 +1,6 @@
 ---
 title: "(Yet Another) Starting a Blog Again"
-archives: ["2025-07"]
+date: 2025-07-10
 tags: ["Misc"]
 description: "Greetings for the new blog launch"
 ---
