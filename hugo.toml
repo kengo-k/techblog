@@ -67,7 +67,7 @@ Content = '技術情報とプログラミング'
 
 [taxonomies]
 tag = 'tags'
-category = 'categories'
+month = 'months'
 
 [frontmatter]
 date = ["date", ":fileModTime"]
