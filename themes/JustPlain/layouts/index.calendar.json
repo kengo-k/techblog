@@ -1,0 +1,22 @@
+{{- $posts := where .Site.RegularPages "Section" "posts" -}}
+{{- $datesByMonth := dict -}}
+
+{{- range $posts -}}
+  {{- if .Date -}}
+    {{- $year := .Date.Format "2006" -}}
+    {{- $month := .Date.Format "01" -}}
+    {{- $day := .Date.Format "02" -}}
+    {{- $monthKey := printf "%s%s" $year $month -}}
+
+    {{- $existing := index $datesByMonth $monthKey -}}
+    {{- if not $existing -}}
+      {{- $datesByMonth = merge $datesByMonth (dict $monthKey (slice $day)) -}}
+    {{- else -}}
+      {{- if not (in $existing $day) -}}
+        {{- $datesByMonth = merge $datesByMonth (dict $monthKey ($existing | append $day)) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $datesByMonth | jsonify -}}
