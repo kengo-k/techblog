@@ -1,0 +1,23 @@
+{{ define "main" }}
+<div class="bg-white">
+  <div class="container mx-auto px-4 py-12">
+    <div class="mb-4">
+      <a href="{{ "/" | relLangURL }}" class="text-sm text-gray-500 hover:text-gray-700">{{ i18n "back_home" }}</a>
+    </div>
+    <h1 class="text-2xl font-medium text-gray-900 mb-8">{{ i18n "archive_list_title" }}</h1>
+
+    <div class="flex flex-wrap gap-3">
+      {{ range .Data.Terms.Alphabetical }}
+      <a href="{{ .Page.Permalink }}" class="px-3 py-2 bg-gray-100 rounded text-sm text-gray-700 hover:bg-gray-200">
+        {{ .Page.Title }} <span class="text-gray-500">({{ .Count }})</span>
+      </a>
+      {{ end }}
+    </div>
+
+    <!-- Advertisement Area -->
+    <div class="h-48 mt-12 bg-gray-50 border border-gray-200 rounded flex items-center justify-center">
+      <span class="text-gray-400 text-xs">広告</span>
+    </div>
+  </div>
+</div>
+{{ end }}
