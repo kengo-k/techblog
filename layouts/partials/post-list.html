@@ -5,7 +5,7 @@
 {{ $dateStr := (cond (ne $partialDate "") $partialDate (.Date.Format "2006-01-02")) }}
 {{ $postDate := time $dateStr }}
 {{ $dataMonth := $postDate.Format "2006-01" }}
-<article class="border-b border-gray-100 pb-8 mb-8 last:border-b-0 blog-post" data-month="{{ $dataMonth }}" data-tags="{{ delimit .Params.tags "," }}">
+<article class="border-b border-gray-100 pb-8 mb-8 last:border-b-0">
   <div class="flex gap-6">
     <div class="w-48 flex-shrink-0">
       <div class="w-full h-32 bg-gray-200 rounded flex items-center justify-center">
