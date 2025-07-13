@@ -1,5 +1,5 @@
 {{- define "main" }}
-<div class="bg-white">
+<div>
     <div class="container mx-auto px-4 py-12">
         <!-- Header -->
         <header class="text-center mb-8">
@@ -11,17 +11,17 @@
                 <!-- Search Input -->
                 <div class="mb-8">
                     <input id="searchInput" autofocus placeholder="{{ if eq .Site.Language.Lang "en" }}Enter search terms{{ else }}検索ワードを入力{{ end }}"
-                        aria-label="search" type="search" autocomplete="off" maxlength="64" 
+                        aria-label="search" type="search" autocomplete="off" maxlength="64"
                         class="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:outline-none">
                 </div>
-                
+
                 <!-- Clear Filters Button -->
                 <div id="clearFilters" class="mb-6" style="display: none;">
                     <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">
                         {{ if eq .Site.Language.Lang "en" }}Clear Filters{{ else }}フィルターをクリア{{ end }}
                     </button>
                 </div>
-                
+
                 <!-- Search Results -->
                 <div id="searchResults" class="space-y-6" aria-label="search results"></div>
                 <div id="noResults" class="text-center py-12 text-gray-500" style="display: none;">
@@ -42,7 +42,7 @@
                         <h3 class="text-sm font-medium text-gray-900 mb-4">{{ if eq .Site.Language.Lang "en" }}Tags{{ else }}タグ{{ end }}</h3>
                         <div class="flex flex-wrap gap-2 mb-2">
                             {{ range .Site.Taxonomies.tags.ByCount }}
-                            <a href="#" class="px-2 py-1 bg-gray-100 rounded text-xs text-gray-700 hover:bg-gray-200 cursor-pointer tag-filter" 
+                            <a href="#" class="px-2 py-1 bg-gray-100 rounded text-xs text-gray-700 hover:bg-gray-200 cursor-pointer tag-filter"
                                data-tag="{{ .Page.Title }}" onclick="filterByTag('{{ .Page.Title }}'); return false;">
                                 {{ .Page.Title }} <span class="text-gray-500">({{ .Count }})</span>
                             </a>
@@ -76,7 +76,7 @@
                               {{ $pages := index $monthMap $monthKey }}
                               {{ $firstPage := index $pages 0 }}
                               {{ $displayDate := cond (eq $.Site.Language.Lang "en") ($firstPage.Date.Format "January 2006") ($firstPage.Date.Format "2006年1月") }}
-                              <div class="flex items-center justify-between py-1 text-left text-sm hover:text-gray-600 cursor-pointer month-filter" 
+                              <div class="flex items-center justify-between py-1 text-left text-sm hover:text-gray-600 cursor-pointer month-filter"
                                    data-month="{{ $monthKey }}" onclick="filterByMonth('{{ $monthKey }}'); return false;">
                                 <span class="text-gray-700 hover:text-gray-600">{{ $displayDate }}</span>
                                 <span class="text-gray-500 text-xs">({{ len $pages }})</span>

@@ -9,64 +9,83 @@
     font-weight: 400;
     font-style: normal;
   }
+  body {
+    background-image: url("/images/bg.svg");
+    background-repeat: repeat;
+    background-size: 400px 300px;
+    background-attachment: fixed;
+  }
 </style>
-  <style>
-    /* Nested numbered TOC like 1-1, 1-1-1 */
-    .toc-ol {
-      counter-reset: item;
-      list-style: none;
-      padding-left: 0;
-    }
-    .toc-ol li {
-      counter-increment: item;
-      margin-left: 0;
-    }
-    /* Top level number */
-    .toc-ol > li::before {
-      content: counter(item) ". ";
-    }
-    /* Nested levels */
-    .toc-ol li li::before {
-      content: counters(item, "-") ". ";
-    }
-    .toc-ol li > ol { /* reset counter for nested */
-      counter-reset: item;
-      margin-left: 1rem;
-    }
+<style>
+  /* Nested numbered TOC like 1-1, 1-1-1 */
+  .toc-ol {
+    counter-reset: item;
+    list-style: none;
+    padding-left: 0;
+  }
+  .toc-ol li {
+    counter-increment: item;
+    margin-left: 0;
+  }
+  /* Top level number */
+  .toc-ol > li::before {
+    content: counter(item) ". ";
+  }
+  /* Nested levels */
+  .toc-ol li li::before {
+    content: counters(item, "-") ". ";
+  }
+  .toc-ol li > ol {
+    /* reset counter for nested */
+    counter-reset: item;
+    margin-left: 1rem;
+  }
 
-    /* Slightly darker background for code blocks to distinguish from page */
-    .prose pre.chroma {
-      background-color: #eef1f4 !important; /* Slightly darker than #f6f8fa */
-    }
+  /* Slightly darker background for code blocks to distinguish from page */
+  .prose pre.chroma {
+    background-color: #eef1f4 !important; /* Slightly darker than #f6f8fa */
+  }
 
-    /* ---- Align line numbers with code lines ---- */
-    /* Remove vertical padding on code block that caused offset */
-    .highlight pre.chroma code {
-      padding-top: 0;
-      padding-bottom: 0;
-    }
-    /* Likewise ensure line-number column has identical padding */
-    .chroma .lnt {
-      padding-top: 0;
-      padding-bottom: 0;
-    }
-    
-    /* Inline code styling - less aggressive than default */
-    .prose code {
-      background-color: #f3f4f6 !important; /* Light gray background */
-      color: #374151 !important;            /* Dark gray text instead of red */
-      padding: 0.125rem 0.25rem !important;
-      border-radius: 0.25rem !important;
-      font-size: 0.875em !important;
-    }
-  </style>
+  /* ---- Align line numbers with code lines ---- */
+  /* Remove vertical padding on code block that caused offset */
+  .highlight pre.chroma code {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  /* Likewise ensure line-number column has identical padding */
+  .chroma .lnt {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
 
-{{/* Search page assets - disabled in favor of custom enhanced search
-{{- if eq .Layout "search" }}
-  <link rel="preload" as="fetch" href="{{ "/index.json" | relLangURL }}">
-  {{- $fuse := resources.Get "js/fuse.basic.min.js" }}
-  {{- $fast := resources.Get "js/fastsearch.js" | js.Build (dict "params" (dict "fuseOpts" site.Params.fuseOpts)) }}
-  {{- $search := (slice $fuse $fast) | resources.Concat "assets/js/search.js" | resources.Minify }}
-  <script defer src="{{ $search.RelPermalink }}"></script>
-{{- end }}
-*/}}
+  /* Inline code styling - less aggressive than default */
+  .prose code {
+    background-color: #f3f4f6 !important; /* Light gray background */
+    color: #374151 !important; /* Dark gray text instead of red */
+    padding: 0.125rem 0.25rem !important;
+    border-radius: 0.25rem !important;
+    font-size: 0.875em !important;
+  }
+
+  /* Header height adjustment - reduce vertical padding */
+  header .container {
+    padding-top: 1rem !important; /* py-4 instead of py-6 */
+    padding-bottom: 1rem !important;
+  }
+
+  /* Adjust search and language icon positions - center vertically */
+  header a[aria-label="Search"],
+  header a[aria-label="Switch language"] {
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+  }
+</style>
+
+{{/* Search page assets - disabled in favor of custom enhanced search {{- if eq
+.Layout "search" }} <link rel="preload" as="fetch" href="{{ "/index.json" |
+relLangURL }}"> {{- $fuse := resources.Get "js/fuse.basic.min.js" }} {{- $fast
+:= resources.Get "js/fastsearch.js" | js.Build (dict "params" (dict "fuseOpts"
+site.Params.fuseOpts)) }} {{- $search := (slice $fuse $fast) | resources.Concat
+"assets/js/search.js" | resources.Minify }}
+<script defer src="{{ $search.RelPermalink }}"></script>
+{{- end }} */}}
