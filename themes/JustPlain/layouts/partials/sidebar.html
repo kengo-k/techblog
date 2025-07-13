@@ -1,9 +1,5 @@
 <aside class="lg:col-span-1">
-  <div class="space-y-8">
-    <div class="h-48 bg-gray-50 border border-gray-200 rounded flex items-center justify-center">
-      <span class="text-gray-400 text-xs">Advertisement</span>
-    </div>
-
+  <div class="space-y-8 -mt-12">
     <!-- Tag List -->
     <div>
       <h3 class="text-sm font-medium text-gray-900 mb-4">{{ i18n "tags_heading" }}</h3>
@@ -19,9 +15,12 @@
       </div>
     </div>
 
+    <div class="h-48 bg-gray-50 border border-gray-200 rounded flex items-center justify-center">
+      <span class="text-gray-400 text-xs">Advertisement</span>
+    </div>
+
     <!-- Calendar -->
     <div>
-      <h3 class="text-sm font-medium text-gray-900 mb-4">{{ cond (eq .Site.Language.Lang "en") "Calendar" "カレンダー" }}</h3>
       {{ partial "calendar.html" . }}
     </div>
 
@@ -29,7 +28,7 @@
     <div>
       <h3 class="text-sm font-medium text-gray-900 mb-4">{{ i18n "archives_heading" }}</h3>
       <div class="space-y-1">
-        {{ $allPages := where (where .Site.RegularPages "Layout" "ne" "search") "Params.searchHidden" "ne" true }}
+        {{ $allPages := where .Site.RegularPages "Section" "posts" }}
         {{ $monthMap := dict }}
         {{ range $allPages }}
           {{ $monthKey := .Date.Format "200601" }}
@@ -60,4 +59,3 @@
     </div>
   </div>
 </aside>
-
