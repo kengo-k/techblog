@@ -19,6 +19,12 @@
       </div>
     </div>
 
+    <!-- Calendar -->
+    <div>
+      <h3 class="text-sm font-medium text-gray-900 mb-4">{{ cond (eq .Site.Language.Lang "en") "Calendar" "カレンダー" }}</h3>
+      {{ partial "calendar.html" . }}
+    </div>
+
     <!-- Archive List -->
     <div>
       <h3 class="text-sm font-medium text-gray-900 mb-4">{{ i18n "archives_heading" }}</h3>
