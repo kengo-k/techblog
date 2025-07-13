@@ -13,6 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Winky+Rough:wght@400&text={{ .Site.Title | urlquery }}&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&text=TAGSARCHIVES&display=swap" rel="stylesheet"><!-- Added Caveat font -->
 
     {{ partial "extend_head.html" . }}
 
@@ -112,6 +113,14 @@
             font-weight: 400;
             font-style: normal;
         }
+
+        .caveat {
+          font-family: "Caveat", cursive;
+          font-optical-sizing: auto;
+          font-weight: 400; /* Adjust as needed */
+          font-style: normal;
+        }
+
     </style>
 </head>
 <body class="bg-white flex flex-col min-h-screen">
