@@ -60,14 +60,14 @@ Content = '技術情報とプログラミング'
     weight = 30
 
   [[menu.main]]
-    identifier = 'archive'
-    name = 'Archive'
+    identifier = 'archives'
+    name = 'Archives'
     url = '/archives/'
     weight = 40
 
 [taxonomies]
 tag = 'tags'
-month = 'months'
+archive = 'archives'
 
 [frontmatter]
 date = ["date", ":fileModTime"]
