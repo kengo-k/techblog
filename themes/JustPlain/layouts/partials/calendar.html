@@ -1,199 +1,266 @@
-<!-- Calendar Component -->
+<!-- Custom Calendar Component -->
 <div class="calendar-container">
   <div id="calendar" class="bg-white p-2"></div>
 </div>
 
-<!-- FullCalendar JS -->
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
-
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const calendarEl = document.getElementById("calendar");
+    let currentDate = new Date();
+    let calendarData = {};
 
-    // JSONを取得してからカレンダー構築
+    // 月名と曜日名
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    // カレンダーデータを取得
     fetch('{{ "/calendar-data.json" | relLangURL }}' + "?v=" + Date.now())
       .then((response) => response.json())
-      .then((calendarData) => {
-        console.log(calendarData);
-
-        // 記事がある日付をFullCalendar用のイベントデータに変換（背景色なし）
-        const events = [];
-
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-          initialView: "dayGridMonth",
-          headerToolbar: {
-            left: "prev,next",
-            center: "title",
-            right: "",
-          },
-          locale: "en",
-          firstDay: 0, // 日曜始まりに統一
-          height: "auto",
-          fixedWeekCount: false,
-          showNonCurrentDates: false,
-          dayHeaderFormat: { weekday: "short" },
-          dayCellContent: function (info) {
-            return info.date.getDate();
-          },
-          events: events,
-          dateClick: function (info) {
-            // 記事がある日付がクリックされた場合の処理
-            const year = info.date.getFullYear();
-            const month = String(info.date.getMonth() + 1).padStart(2, "0");
-            const day = String(info.date.getDate());
-            const monthKey = `${year}${month}`;
-
-            const daysInMonth = calendarData[monthKey] || [];
-            if (daysInMonth.includes(day)) {
-              // 該当日の記事一覧ページにリダイレクト
-              const dayPadded = day.padStart(2, "0");
-              const url = `{{ "/" | relLangURL }}posts/${year}${month}/${dayPadded}/`;
-              window.location.href = url;
-            }
-          },
-          dayCellDidMount: function (info) {
-            // 記事がある日付にマーカーを追加
-            const year = info.date.getFullYear();
-            const month = String(info.date.getMonth() + 1).padStart(2, "0");
-            const day = String(info.date.getDate()).padStart(2, "0");
-            const monthKey = `${year}${month}`;
-
-            // JSONから該当月の日付配列を取得してYYYY-MM-DD形式にマップ
-            const daysInMonth = calendarData[monthKey] || [];
-            const fullDates = daysInMonth.map(
-              (d) => `${year}-${month}-${d.padStart(2, "0")}`
-            );
-            const dateStr = `${year}-${month}-${day}`;
-
-            if (fullDates.includes(dateStr)) {
-              console.log("Match found for day:", day);
-              const dayEl = info.el;
-              dayEl.style.position = "relative";
-
-              // 日付を囲む丸いマーカーを追加
-              const marker = document.createElement("div");
-              marker.className = "article-marker";
-              marker.style.cssText = `
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-60%, -50%);
-          width: 20px;
-          height: 20px;
-          background-color: #93c5fd;
-          border-radius: 50%;
-          z-index: 0;
-        `;
-              dayEl.appendChild(marker);
-
-              // 記事がある日の数字を白色に変更
-              const dayNumber = dayEl.querySelector(".fc-daygrid-day-number");
-              if (dayNumber) {
-                dayNumber.style.color = "#ffffff";
-                dayNumber.style.fontWeight = "600";
-              }
-
-              // ホバー効果
-              dayEl.style.cursor = "pointer";
-              dayEl.addEventListener("mouseenter", function () {
-                dayEl.style.backgroundColor = "#f3f4f6";
-              });
-              dayEl.addEventListener("mouseleave", function () {
-                dayEl.style.backgroundColor = "";
-              });
-            }
-          },
-        });
-
-        calendar.render();
+      .then((data) => {
+        calendarData = data;
+        renderCalendar();
       })
       .catch((error) => {
         console.error("Calendar data not found:", error);
+        renderCalendar();
       });
+
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
+      // カレンダーHTML構築
+      let html = `
+        <div class="custom-calendar">
+          <!-- ヘッダー -->
+          <div class="calendar-header">
+            <button id="prev-btn" class="nav-btn">‹</button>
+            <div class="calendar-title">${monthNames[month]} ${year}</div>
+            <button id="next-btn" class="nav-btn">›</button>
+          </div>
+
+          <!-- 曜日ヘッダー -->
+          <div class="calendar-weekdays">
+            ${dayNames
+              .map((day) => `<div class="weekday">${day}</div>`)
+              .join("")}
+          </div>
+
+          <!-- 日付グリッド -->
+          <div class="calendar-grid">
+            ${generateDaysCells(year, month)}
+          </div>
+        </div>
+      `;
+
+      calendarEl.innerHTML = html;
+
+      // イベントリスナー追加
+      document.getElementById("prev-btn").addEventListener("click", prevMonth);
+      document.getElementById("next-btn").addEventListener("click", nextMonth);
+
+      // 日付クリックイベント
+      document.querySelectorAll(".calendar-day").forEach((dayEl) => {
+        dayEl.addEventListener("click", handleDateClick);
+      });
+    }
+
+    function generateDaysCells(year, month) {
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const startDate = new Date(firstDay);
+      startDate.setDate(startDate.getDate() - firstDay.getDay());
+
+      const monthKey = `${year}${String(month + 1).padStart(2, "0")}`;
+      const articlesInMonth = calendarData[monthKey] || [];
+
+      let cells = "";
+      let currentCell = new Date(startDate);
+
+      for (let week = 0; week < 6; week++) {
+        for (let day = 0; day < 7; day++) {
+          const cellMonth = currentCell.getMonth();
+          const cellDate = currentCell.getDate();
+          const cellDay = String(cellDate);
+
+          const isCurrentMonth = cellMonth === month;
+          const hasArticle =
+            isCurrentMonth && articlesInMonth.includes(cellDay);
+
+          if (!isCurrentMonth) {
+            cells += '<div class="calendar-day other-month"></div>';
+          } else {
+            const classes = `calendar-day current-month ${
+              hasArticle ? "has-article" : ""
+            }`;
+            const dataAttrs = `data-year="${year}" data-month="${
+              month + 1
+            }" data-day="${cellDate}"`;
+
+            cells += `<div class="${classes}" ${dataAttrs}><span class="day-number">${cellDate}</span>${
+              hasArticle ? '<div class="article-marker"></div>' : ""
+            }</div>`;
+          }
+
+          currentCell.setDate(currentCell.getDate() + 1);
+        }
+
+        if (currentCell.getMonth() !== month && week >= 4) break;
+      }
+
+      return cells;
+    }
+
+    function handleDateClick(event) {
+      const dayEl = event.currentTarget;
+      if (!dayEl.classList.contains("has-article")) return;
+
+      const year = dayEl.dataset.year;
+      const month = dayEl.dataset.month;
+      const day = dayEl.dataset.day;
+
+      const dayPadded = day.padStart(2, "0");
+      const monthPadded = month.padStart(2, "0");
+      const url = `{{ "/" | relLangURL }}posts/${year}${monthPadded}/${dayPadded}/`;
+      window.location.href = url;
+    }
+
+    function prevMonth() {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    }
+
+    function nextMonth() {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    }
   });
 </script>
 
 <style>
-  /* カレンダーのカスタムスタイル */
-  .fc-theme-standard .fc-scrollgrid {
-    border: none;
+  /* Custom Calendar Styles - FullCalendarと同じ見た目を再現 */
+  .custom-calendar {
+    font-family: inherit;
   }
 
-  .fc-theme-standard td,
-  .fc-theme-standard th {
-    border-color: #f3f4f6;
-    border-width: 1px;
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5em;
   }
 
-  .fc-col-header-cell {
-    background-color: #f9fafb;
-  }
-
-  .fc-col-header-cell-cushion {
-    font-size: 0.65rem;
-    color: #6b7280;
-  }
-
-  .fc-daygrid-day-number {
-    color: #6b7280;
-    font-weight: 400;
-    font-size: 0.65rem;
-  }
-
-  .fc-day-today {
-    background-color: transparent !important;
-  }
-
-  .fc-button {
-    background-color: transparent;
-    border: none;
-    color: #6b7280;
-    padding: 1px 3px;
-    font-size: 10px !important;
-    font-weight: 400;
-    line-height: 1.2;
-  }
-
-  .fc-button:hover {
-    background-color: #f3f4f6;
+  .calendar-title {
     color: #374151;
-  }
-
-  .fc-button:disabled {
-    background-color: transparent;
-    color: #d1d5db;
-  }
-
-  .fc-toolbar-title {
-    color: #374151;
-    font-size: 11px !important;
+    font-size: 11px;
     font-weight: 500;
     line-height: 1.2;
   }
 
-  .fc .fc-toolbar.fc-header-toolbar {
-    margin-bottom: 0.5em !important;
+  .nav-btn {
+    background-color: transparent;
+    border: none;
+    color: #6b7280;
+    padding: 1px 3px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.2;
+    cursor: pointer;
   }
 
-  .fc-daygrid-day {
-    height: 20px !important;
-    width: 20px !important;
+  .nav-btn:hover {
+    background-color: #f3f4f6;
+    color: #374151;
   }
 
-  .fc-daygrid-day-frame {
-    min-height: 20px;
+  .calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0;
+  }
+
+  .weekday {
+    background-color: #f9fafb;
+    border: 1px solid #f3f4f6;
+    font-size: 0.65rem;
+    color: #6b7280;
+    text-align: center;
+    padding: 2px;
+    aspect-ratio: 1;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .fc-daygrid-day-number {
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0;
+  }
+
+  .calendar-day {
+    border: 1px solid #f3f4f6;
+    aspect-ratio: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
+    position: relative;
+    background-color: white;
+  }
+
+  .calendar-day.other-month {
+    background-color: #f9fafb;
+    border: 1px solid #f3f4f6;
+  }
+
+  .calendar-day.empty {
+    background-color: #f9fafb;
+    border: 1px solid #f3f4f6;
+  }
+
+  .day-number {
+    color: #6b7280;
+    font-weight: 400;
+    font-size: 0.65rem;
+    z-index: 1;
+    position: relative;
+  }
+
+  .calendar-day.has-article {
+    cursor: pointer;
+  }
+
+  .calendar-day.has-article:hover {
+    background-color: #f3f4f6;
+  }
+
+  .calendar-day.has-article .day-number {
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  .article-marker {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    background-color: #93c5fd;
+    border-radius: 50%;
+    z-index: 0;
   }
 </style>
