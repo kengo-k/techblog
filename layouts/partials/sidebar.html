@@ -48,11 +48,10 @@
           {{ $dateStr := (cond (ne $partialDate "") $partialDate ($firstPage.Date.Format "2006-01-02")) }}
           {{ $parsedDate := time $dateStr }}
           {{ $displayDate := cond (eq $.Site.Language.Lang "en") ($parsedDate.Format "January 2006") ($parsedDate.Format "2006年1月") }}
-          <div class="flex items-center justify-between py-1 text-left text-sm hover:text-gray-600">
+          <div class="py-1 text-left text-sm hover:text-gray-600">
             <a href="{{ (print "/archives/" $monthKey "/") | relLangURL }}" class="text-gray-700 hover:text-gray-600">
-              {{ $displayDate }}
+              {{ $displayDate }} ({{ len $pages }})
             </a>
-            <span class="text-gray-500 text-xs">({{ len $pages }})</span>
           </div>
         {{ end }}
         <div class="text-right mt-2">
