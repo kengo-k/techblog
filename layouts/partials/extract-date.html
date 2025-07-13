@@ -1,15 +1,15 @@
-{{- /* Extract date from file path: content/posts/YYYYMM/DD-title.md -> YYYY-MM-DD */ -}}
+{{- /* Extract date from file path: content/posts/YYYYMM/DD/title/index.md -> YYYY-MM-DD */ -}}
 {{- if and .File .File.Path -}}
   {{- $path := .File.Path -}}
   {{- $segments := split $path "/" -}}
-  {{- if ge (len $segments) 3 -}}
-    {{- $dir := index $segments 1 -}}  {{/* 202411 */}}
-    {{- $file := index $segments 2 -}} {{/* 01-title.md */}}
-    {{- if and $dir $file (ge (len $dir) 6) (ge (len $file) 2) -}}
-      {{- $day := substr $file 0 2 -}}   {{/* 01 */}}
-      {{- $year := substr $dir 0 4 -}}   {{/* 2024 */}}
-      {{- $month := substr $dir 4 2 -}}  {{/* 11 */}}
-      {{- printf "%s-%s-%s" $year $month $day -}}
+  {{- if ge (len $segments) 5 -}}
+    {{- $monthDir := index $segments 2 -}}  {{/* 202507 */}}
+    {{- $dayDir := index $segments 3 -}}    {{/* 12 */}}
+    {{- if and $monthDir $dayDir (ge (len $monthDir) 6) (ge (len $dayDir) 1) -}}
+      {{- $year := substr $monthDir 0 4 -}}   {{/* 2025 */}}
+      {{- $month := substr $monthDir 4 2 -}}  {{/* 07 */}}
+      {{- $day := $dayDir -}}                 {{/* 12 */}}
+      {{- printf "%s-%s-%02s" $year $month $day -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}
