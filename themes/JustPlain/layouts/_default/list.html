@@ -16,6 +16,38 @@
         {{ end }}
 
         {{ $pages := .Pages }}
+
+        {{ if eq .Section "posts" }}
+          {{ $pathSegments := split (trim .RelPermalink "/") "/" }}
+          {{ $isMonthPage := false }}
+          {{ $isDayPage := false }}
+          {{ $monthSegment := "" }}
+
+          {{ if ge (len $pathSegments) 2 }}
+            {{ $monthSegment = index $pathSegments 1 }}
+            {{ if and (eq (len $monthSegment) 6) (strings.HasPrefix $monthSegment "20") }}
+              {{ if eq (len $pathSegments) 2 }}
+                {{ $isMonthPage = true }}
+              {{ else if eq (len $pathSegments) 3 }}
+                {{ $daySegment := index $pathSegments 2 }}
+                {{ if le (len $daySegment) 2 }}
+                  {{ $isDayPage = true }}
+                {{ end }}
+              {{ end }}
+            {{ end }}
+          {{ end }}
+
+          {{ if $isMonthPage }}
+            {{ $allPosts := slice }}
+            {{ range where .Site.RegularPages "Section" "posts" }}
+              {{ $postPath := .RelPermalink }}
+              {{ if strings.Contains $postPath (printf "/%s/" $monthSegment) }}
+                {{ $allPosts = $allPosts | append . }}
+              {{ end }}
+            {{ end }}
+            {{ $pages = sort $allPosts "Date" "desc" }}
+          {{ end }}
+        {{ end }}
         {{ $paginator := .Paginate $pages }}
         {{ partial "post-list.html" (dict "paginator" $paginator) }}
       </main>
