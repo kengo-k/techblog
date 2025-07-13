@@ -1,7 +1,7 @@
 baseURL = 'https://example.org/'
 languageCode = 'ja'
 title = 'Tech Blog'
-theme = 'PaperMod'
+theme = 'JustPlain'
 defaultContentLanguage = "ja"
 defaultContentLanguageInSubdir = false
 
