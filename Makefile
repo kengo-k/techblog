@@ -9,7 +9,7 @@ help:
 	@echo "  help     - Show this help message"
 
 # Start development server
-serve:
+serve: clean
 	hugo server -D
 
 # Build for production
