@@ -1,4 +1,72 @@
-{{- /* Head custom content area start */ -}}
-{{- /*     Insert any custom code (web-analytics, resources, etc.) - it will appear in the <head></head> section of every page. */ -}}
-{{- /*     Can be overwritten by partial with the same name in the global layouts. */ -}}
-{{- /* Head custom content area end */ -}}
+<!-- Chroma syntax highlighting theme -->
+<link rel="stylesheet" href="{{ "/css/chroma-github.css" | relURL }}">
+<!-- <link rel="stylesheet" href="/css/chroma-github.css"> -->
+<style>
+  /* Labrada font examples */
+  .labrada-regular {
+    font-family: "Labrada", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+  }
+</style>
+  <style>
+    /* Nested numbered TOC like 1-1, 1-1-1 */
+    .toc-ol {
+      counter-reset: item;
+      list-style: none;
+      padding-left: 0;
+    }
+    .toc-ol li {
+      counter-increment: item;
+      margin-left: 0;
+    }
+    /* Top level number */
+    .toc-ol > li::before {
+      content: counter(item) ". ";
+    }
+    /* Nested levels */
+    .toc-ol li li::before {
+      content: counters(item, "-") ". ";
+    }
+    .toc-ol li > ol { /* reset counter for nested */
+      counter-reset: item;
+      margin-left: 1rem;
+    }
+
+    /* Slightly darker background for code blocks to distinguish from page */
+    .prose pre.chroma {
+      background-color: #eef1f4 !important; /* Slightly darker than #f6f8fa */
+    }
+
+    /* ---- Align line numbers with code lines ---- */
+    /* Remove vertical padding on code block that caused offset */
+    .highlight pre.chroma code {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    /* Likewise ensure line-number column has identical padding */
+    .chroma .lnt {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    
+    /* Inline code styling - less aggressive than default */
+    .prose code {
+      background-color: #f3f4f6 !important; /* Light gray background */
+      color: #374151 !important;            /* Dark gray text instead of red */
+      padding: 0.125rem 0.25rem !important;
+      border-radius: 0.25rem !important;
+      font-size: 0.875em !important;
+    }
+  </style>
+
+{{/* Search page assets - disabled in favor of custom enhanced search
+{{- if eq .Layout "search" }}
+  <link rel="preload" as="fetch" href="{{ "/index.json" | relLangURL }}">
+  {{- $fuse := resources.Get "js/fuse.basic.min.js" }}
+  {{- $fast := resources.Get "js/fastsearch.js" | js.Build (dict "params" (dict "fuseOpts" site.Params.fuseOpts)) }}
+  {{- $search := (slice $fuse $fast) | resources.Concat "assets/js/search.js" | resources.Minify }}
+  <script defer src="{{ $search.RelPermalink }}"></script>
+{{- end }}
+*/}}

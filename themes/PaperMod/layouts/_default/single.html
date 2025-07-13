@@ -1,65 +1,80 @@
-{{- define "main" }}
-
-<article class="post-single">
-  <header class="post-header">
-    {{ partial "breadcrumbs.html" . }}
-    <h1 class="post-title entry-hint-parent">
-      {{ .Title }}
-      {{- if .Draft }}
-      <span class="entry-hint" title="Draft">
-        <svg xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 -960 960 960" fill="currentColor">
-          <path
-            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
-        </svg>
-      </span>
-      {{- end }}
-    </h1>
-    {{- if .Description }}
-    <div class="post-description">
-      {{ .Description }}
+{{ define "main" }}
+<div class="bg-white">
+  <div class="container mx-auto px-4 py-12">
+    <div class="mb-4">
+      <a href="{{ "/" | relLangURL }}" class="text-sm text-gray-500 hover:text-gray-700">{{ if eq .Site.Language.Lang "en" }}← Back to Home{{ else }}← ホームへ戻る{{ end }}</a>
     </div>
-    {{- end }}
-    {{- if not (.Param "hideMeta") }}
-    <div class="post-meta">
-      {{- partial "post_meta.html" . -}}
-      {{- partial "translation_list.html" . -}}
-      {{- partial "edit_post.html" . -}}
-      {{- partial "post_canonical.html" . -}}
-    </div>
-    {{- end }}
-  </header>
-  {{- $isHidden := (.Param "cover.hiddenInSingle") | default (.Param "cover.hidden") | default false }}
-  {{- partial "cover.html" (dict "cxt" . "IsSingle" true "isHidden" $isHidden) }}
-  {{- if (.Param "ShowToc") }}
-  {{- partial "toc.html" . }}
-  {{- end }}
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
+    <main class="lg:col-span-3">
+      <article class="p-8">
+        <!-- Article Header -->
+        <header class="mb-8">
+          <div class="flex justify-between items-center mb-4">
+            <h1 class="text-2xl font-bold text-gray-700">{{ if .Draft }}<svg class="inline-block w-7 h-7 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>{{ end }}{{ .Title }}</h1>
+            <time class="text-sm text-gray-500 ml-4 whitespace-nowrap">{{ cond (eq $.Site.Language.Lang "en") (.Date.Format "January 2, 2006") (.Date.Format "2006年1月2日") }}</time>
+          </div>
 
-  {{- if .Content }}
-  <div class="post-content">
-    {{- if not (.Param "disableAnchoredHeadings") }}
-    {{- partial "anchored_headings.html" .Content -}}
-    {{- else }}{{ .Content }}{{ end }}
+          <!-- Tags -->
+          <div class="flex flex-wrap gap-2">
+            {{ range .Params.tags }}
+            <span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">
+              {{ . }}
+            </span>
+            {{ end }}
+          </div>
+        </header>
+
+        <!-- Article Content -->
+        <div class="prose prose-lg max-w-none">
+          {{ if and .TableOfContents (gt (len .TableOfContents) 50) }}
+          {{ $toc := replace (replace .TableOfContents "<ul>" "<ol class=\"toc-ol ml-4\">") "</ul>" "</ol>" | safeHTML }}
+          <nav class="mb-8 p-4 bg-gray-50 border-l-4 border-gray-200 rounded-md">
+            {{ $toc }}
+          </nav>
+          {{ end }}
+          {{ .Content }}
+        </div>
+      </article>
+
+      <!-- Navigation links removed as per design -->
+    </main>
+
+    <div class="lg:col-span-1">
+      <div class="lg:sticky lg:top-20">
+        {{ partial "sidebar.html" . }}
+      </div>
+    </div>
+    </div>
   </div>
-  {{- end }}
+</div>
 
-  <footer class="post-footer">
-    {{- $tags := .Language.Params.Taxonomies.tag | default "tags" }}
-    <ul class="post-tags">
-      {{- range ($.GetTerms $tags) }}
-      <li><a href="{{ .Permalink }}">{{ .LinkTitle }}</a></li>
-      {{- end }}
-    </ul>
-    {{- if (.Param "ShowPostNavLinks") }}
-    {{- partial "post_nav_links.html" . }}
-    {{- end }}
-    {{- if (and site.Params.ShowShareButtons (ne .Params.disableShare true)) }}
-    {{- partial "share_icons.html" . -}}
-    {{- end }}
-  </footer>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Collect headings inside article content
+  const headings = document.querySelectorAll('.prose h2, .prose h3, .prose h4, .prose h5, .prose h6');
+  if (!headings.length) return;
 
-  {{- if (.Param "comments") }}
-  {{- partial "comments.html" . }}
-  {{- end }}
-</article>
+  const levelMap = {H2: 0, H3: 1, H4: 2, H5: 3, H6: 4};
+  const counters = [0, 0, 0, 0, 0];
 
-{{- end }}{{/* end main */}}
+  // Assign sequential IDs like 1-2-3
+  headings.forEach(h => {
+    const lvl = levelMap[h.tagName];
+    counters[lvl]++;
+    // reset lower-level counters
+    for (let i = lvl + 1; i < counters.length; i++) counters[i] = 0;
+    const num = counters.slice(0, lvl + 1).filter(n => n > 0).join('-');
+    const id = `sec-${num}`;
+    h.id = id;
+  });
+
+  // Update TOC links in the same order
+  const tocLinks = document.querySelectorAll('nav .toc-ol a');
+  headings.forEach((h, idx) => {
+    if (tocLinks[idx]) {
+      tocLinks[idx].setAttribute('href', `#${h.id}`);
+    }
+  });
+});
+</script>
+{{ end }}

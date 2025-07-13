@@ -1,40 +1,15 @@
 {{- define "main" }}
+<div class="bg-white">
+  <div class="container mx-auto px-4 py-12">
+    <div class="mb-4">
+      <a href="{{ "/" | relLangURL }}" class="text-sm text-gray-500 hover:text-gray-700">{{ if eq .Site.Language.Lang "en" }}← Back to Home{{ else }}← ホームへ戻る{{ end }}</a>
+    </div>
+    <h1 class="text-2xl font-medium text-gray-900 mb-8">{{ .Title }}</h1>
 
-<header class="page-header">
-  <h1>
-    {{ .Title }}
-    {{- if (.Param "ShowRssButtonInSectionTermList") }}
-    {{- $rss := (.OutputFormats.Get "rss") }}
-    {{- if (eq .Kind `page`) }}
-    {{- $rss = (.Parent.OutputFormats.Get "rss") }}
-    {{- end }}
-    {{- with $rss }}
-    <a href="{{ .RelPermalink }}" title="RSS" aria-label="RSS">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round" height="23">
-        <path d="M4 11a9 9 0 0 1 9 9" />
-        <path d="M4 4a16 16 0 0 1 16 16" />
-        <circle cx="5" cy="19" r="1" />
-      </svg>
-    </a>
-    {{- end }}
-    {{- end }}
-  </h1>
-  {{- if .Description }}
-  <div class="post-description">
-    {{ .Description }}
-  </div>
-  {{- end }}
-</header>
-
-{{/* TOPページと完全に同じロジックを使用 */}}
 {{ $allPages := where (where .Site.RegularPages "Layout" "ne" "search") "Params.searchHidden" "ne" true }}
 {{ $monthMap := dict }}
 {{ range $allPages }}
-  {{ $partialDate := (partial "extract-date.html" . | plainify | printf "%s") }}
-  {{ $dateStr := (cond (ne $partialDate "") $partialDate (.Date.Format "2006-01-02")) }}
-  {{ $postDate := time $dateStr }}
-  {{ $monthKey := $postDate.Format "2006-01" }}
+  {{ $monthKey := .Date.Format "200601" }}
   {{ $pages := index $monthMap $monthKey | default slice }}
   {{ $pages = $pages | append . }}
   {{ $monthMap = merge $monthMap (dict $monthKey $pages) }}
@@ -49,72 +24,43 @@
   {{ $yearMap = merge $yearMap (dict $year $monthDict) }}
 {{ end }}
 
-{{/* 年キーをソート (新しい順) */}}
-{{ $years := slice }}
-{{ range $year, $_ := $yearMap }}
-  {{ $years = $years | append $year }}
+{{/* 年をソート（新しい順） */}}
+{{ $yearKeys := slice }}
+{{ range $year, $months := $yearMap }}
+  {{ $yearKeys = $yearKeys | append $year }}
 {{ end }}
-{{ $sortedYears := sort $years }}
+{{ $sortedYears := sort $yearKeys }}
 
-{{- range $i := seq (sub (len $sortedYears) 1) 0 }}
+{{/* 年別表示（新しい年から順番に） */}}
+{{ range $i := seq (sub (len $sortedYears) 1) 0 }}
   {{ $year := index $sortedYears $i }}
-  {{ $monthsDict := index $yearMap $year }}
-  {{ $monthKeys := slice }}
-  {{ range $monthKey, $_ := $monthsDict }}
-    {{ $monthKeys = $monthKeys | append $monthKey }}
-  {{ end }}
-  {{ $sortedMonths := sort $monthKeys }}
+  {{ $monthDict := index $yearMap $year }}
   
-<div class="archive-year">
-  <h2 class="archive-year-header" id="{{ $year }}">
-    <a class="archive-header-link" href="#{{ $year }}">
-      {{- $year -}}
-    </a>
-    <sup class="archive-count">&nbsp;{{ $totalPagesCount := 0 }}{{ range $monthKey := $sortedMonths }}{{ $monthPages := index $monthsDict $monthKey }}{{ $totalPagesCount = add $totalPagesCount (len $monthPages) }}{{ end }}{{ $totalPagesCount }}</sup>
-  </h2>
-  
-  {{- range $j := seq (sub (len $sortedMonths) 1) 0 }}
-    {{ $monthKey := index $sortedMonths $j }}
-    {{ $monthPages := index $monthsDict $monthKey }}
-    {{ $firstPage := index $monthPages 0 }}
-    {{ $partialDate := (partial "extract-date.html" $firstPage | plainify | printf "%s") }}
-    {{ $dateStr := (cond (ne $partialDate "") $partialDate ($firstPage.Date.Format "2006-01-02")) }}
-    {{ $parsedDate := time $dateStr }}
-    {{ $monthName := $parsedDate.Format "January" }}
-    
-  <div class="archive-month">
-    <h3 class="archive-month-header" id="{{ $year }}-{{ $monthName }}">
-      <a class="archive-header-link" href="#{{ $year }}-{{ $monthName }}">
-        {{- $monthName -}}
-      </a>
-      <sup class="archive-count">&nbsp;{{ len $monthPages }}</sup>
-    </h3>
-    <div class="archive-posts">
-      {{- range $monthPages }}
-      {{- if eq .Kind "page" }}
-      <div class="archive-entry">
-        <h3 class="archive-entry-title entry-hint-parent">
-          {{- .Title | markdownify }}
-          {{- if .Draft }}
-          <span class="entry-hint" title="Draft">
-            <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" fill="currentColor">
-              <path
-                d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
-            </svg>
-          </span>
-          {{- end }}
-        </h3>
-        <div class="archive-meta">
-          {{- partial "post_meta.html" . -}}
-        </div>
-        <a class="entry-link" aria-label="post link to {{ .Title | plainify }}" href="{{ .Permalink }}"></a>
+    <div class="mb-4 flex items-center gap-4">
+      <h2 class="text-lg font-medium text-gray-900 flex-shrink-0">{{ $year }}{{ if eq $.Site.Language.Lang "en" }}{{ else }}年{{ end }}</h2>
+      <div class="flex flex-wrap gap-2">
+        {{ $monthKeys := slice }}
+        {{ range $monthKey, $pages := $monthDict }}
+          {{ $monthKeys = $monthKeys | append $monthKey }}
+        {{ end }}
+        {{ $sortedMonths := sort $monthKeys }}
+        {{ range $sortedMonths }}
+          {{ $monthKey := . }}
+          {{ $pages := index $monthDict $monthKey }}
+          {{ $firstPage := index $pages 0 }}
+          {{ $displayDate := cond (eq $.Site.Language.Lang "en") ($firstPage.Date.Format "January") ($firstPage.Date.Format "1月") }}
+          <a href="{{ (print "/posts/" $monthKey "/") | relLangURL }}" class="px-3 py-2 bg-gray-100 rounded text-sm text-gray-700 hover:bg-gray-200">
+            {{ $displayDate }} <span class="text-gray-500">({{ len $pages }})</span>
+          </a>
+        {{ end }}
       </div>
-      {{- end }}
-      {{- end }}
+    </div>
+{{ end }}
+
+    <!-- Advertisement Area -->
+    <div class="h-48 mt-12 bg-gray-50 border border-gray-200 rounded flex items-center justify-center">
+      <span class="text-gray-400 text-xs">{{ if eq .Site.Language.Lang "en" }}Advertisement{{ else }}広告{{ end }}</span>
     </div>
   </div>
-  {{- end }}
 </div>
 {{- end }}
-
-{{- end }}{{/* end main */}}
