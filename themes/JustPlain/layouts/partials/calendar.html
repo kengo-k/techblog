@@ -11,7 +11,7 @@
     const calendarEl = document.getElementById("calendar");
 
     // JSONを取得してからカレンダー構築
-    fetch('{{ "/calendar-data.json" | relLangURL }}')
+    fetch('{{ "/calendar-data.json" | relLangURL }}' + "?v=" + Date.now())
       .then((response) => response.json())
       .then((calendarData) => {
         console.log(calendarData);
@@ -57,10 +57,12 @@
             const month = String(info.date.getMonth() + 1).padStart(2, "0");
             const day = String(info.date.getDate()).padStart(2, "0");
             const monthKey = `${year}${month}`;
-            
+
             // JSONから該当月の日付配列を取得してYYYY-MM-DD形式にマップ
             const daysInMonth = calendarData[monthKey] || [];
-            const fullDates = daysInMonth.map(d => `${year}-${month}-${d.padStart(2, "0")}`);
+            const fullDates = daysInMonth.map(
+              (d) => `${year}-${month}-${d.padStart(2, "0")}`
+            );
             const dateStr = `${year}-${month}-${day}`;
 
             if (fullDates.includes(dateStr)) {
