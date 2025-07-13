@@ -81,7 +81,13 @@ date = ["date", ":fileModTime"]
     lineNos = false
 
 [outputs]
-home = ["HTML", "RSS", "JSON"]
+home = ["HTML", "RSS", "JSON", "CALENDAR"]
+
+[outputFormats]
+  [outputFormats.CALENDAR]
+    mediaType = "application/json"
+    baseName = "calendar-data"
+    isPlainText = true
 
 [params.fuseOpts]
 limit = 10
