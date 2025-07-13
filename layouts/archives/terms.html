@@ -6,13 +6,36 @@
     </div>
     <h1 class="text-2xl font-medium text-gray-900 mb-8">{{ i18n "archive_list_title" }}</h1>
 
-    <div class="flex flex-wrap gap-3">
-      {{ range .Data.Terms.Alphabetical }}
-      <a href="{{ .Page.Permalink }}" class="px-3 py-2 bg-gray-100 rounded text-sm text-gray-700 hover:bg-gray-200">
-        {{ .Page.Title }} <span class="text-gray-500">({{ .Count }})</span>
-      </a>
-      {{ end }}
-    </div>
+    {{/* アーカイブを年単位でグループ化 */}}
+    {{ $yearMap := dict }}
+    {{ range .Data.Terms.Alphabetical }}
+      {{ $year := substr .Page.Title 0 4 }}
+      {{ $month := substr .Page.Title 5 2 }}
+      {{ $yearData := index $yearMap $year | default (dict "months" slice) }}
+      {{ $months := index $yearData "months" | append (dict "month" $month "page" .Page "count" .Count) }}
+      {{ $yearMap = merge $yearMap (dict $year (dict "months" $months)) }}
+    {{ end }}
+
+    {{/* 年をソートして最新年から表示 */}}
+    {{ $years := slice }}
+    {{ range $year, $data := $yearMap }}
+      {{ $years = $years | append $year }}
+    {{ end }}
+    {{ $sortedYears := sort $years }}
+    {{ range $i := seq (sub (len $sortedYears) 1) 0 }}
+      {{ $year := index $sortedYears $i }}
+      {{ $yearData := index $yearMap $year }}
+      <div class="mb-4 flex items-center gap-4">
+        <h2 class="text-lg font-medium text-gray-900 flex-shrink-0">{{ $year }}年</h2>
+        <div class="flex flex-wrap gap-2">
+          {{ range sort (index $yearData "months") "month" }}
+          <a href="{{ .page.Permalink }}" class="px-3 py-2 bg-gray-100 rounded text-sm text-gray-700 hover:bg-gray-200">
+            {{ .month }}月 <span class="text-gray-500">({{ .count }})</span>
+          </a>
+          {{ end }}
+        </div>
+      </div>
+    {{ end }}
 
     <!-- Advertisement Area -->
     <div class="h-48 mt-12 bg-gray-50 border border-gray-200 rounded flex items-center justify-center">
