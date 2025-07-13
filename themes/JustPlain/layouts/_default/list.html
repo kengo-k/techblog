@@ -11,13 +11,11 @@
         {{ if not .IsHome }}
         <div class="mb-8">
           <h1 class="text-2xl font-medium text-gray-900 mb-2">{{ .Title }}</h1>
-          {{ $allPages := where .Site.RegularPages "Section" "posts" }}
-          <p class="text-gray-600 text-sm">{{ i18n "post_count" (dict "Count" ($allPages | len)) }}</p>
+          <p class="text-gray-600 text-sm">{{ i18n "post_count" (dict "Count" (.Pages | len)) }}</p>
         </div>
         {{ end }}
 
-        {{ $allPages := where .Site.RegularPages "Section" "posts" }}
-        {{ $pages := $allPages }}
+        {{ $pages := .Pages }}
         {{ $paginator := .Paginate $pages }}
         {{ partial "post-list.html" (dict "paginator" $paginator) }}
       </main>

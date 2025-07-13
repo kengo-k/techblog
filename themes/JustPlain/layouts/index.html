@@ -4,14 +4,14 @@
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
       <!-- Main Content -->
       <main class="lg:col-span-3">
-        {{ $paginator := .Paginate (where (where .Site.RegularPages "Layout" "ne" "search") "Params.searchHidden" "ne" true) }}
-        {{ partial "post-list.html" (dict "paginator" $paginator) }}
+        {{ $paginator := .Paginate (where (where .Site.RegularPages "Layout"
+        "ne" "search") "Params.searchHidden" "ne" true) }} {{ partial
+        "post-list.html" (dict "paginator" $paginator) }}
       </main>
 
       {{ partial "sidebar.html" . }}
     </div>
   </div>
 </div>
-
 
 {{ end }}
