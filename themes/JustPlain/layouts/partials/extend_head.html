@@ -1,5 +1,5 @@
 <!-- Google Analytics -->
-{{ if .Site.Params.googleAnalytics }}
+{{ if and .Site.Params.googleAnalytics (not hugo.IsServer) }}
 <script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Params.googleAnalytics }}"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -7,6 +7,26 @@
   gtag('js', new Date());
   gtag('config', '{{ .Site.Params.googleAnalytics }}');
 </script>
+{{ end }}
+
+<!-- Development Server Indicator -->
+{{ if hugo.IsServer }}
+<style>
+  .dev-indicator {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: #3b82f6;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 9999;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+</style>
+<div class="dev-indicator">🚧 DEV SERVER</div>
 {{ end }}
 
 <!-- Chroma syntax highlighting theme -->
