@@ -25,6 +25,7 @@ enableEmoji = true
 [params]
 description = "個人的に気になったことのメモなど"
 author = 'kengo'
+googleAnalytics = "G-GW5ZZD3TH2"
 showToc = true
 showCodeCopyButtons = true
 showReadingTime = true
