@@ -6,7 +6,7 @@
     "dev": "hugo server -D --port 1313",
     "build": "npm run build:css && hugo",
     "build:css": "tailwindcss -i ./assets/css/input.css -o ./static/css/tailwind.css --minify",
-    "build:css:watch": "tailwindcss -i ./assets/css/input.css -o ./static/css/tailwind.css --watch"
+    "build:css:watch": "tailwindcss -i ./assets/css/input.css -o ./static/css/tailwind.css --watch --minify"
   },
   "devDependencies": {
     "tailwindcss": "^3.4.14"
