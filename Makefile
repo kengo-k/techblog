@@ -10,13 +10,14 @@ help:
 
 # Start development server
 serve: clean
-	hugo server -D
+	npm run dev
 
 # Build for production
 build:
-	hugo --minify
+	npm run build
 
 # Clean build artifacts
 clean:
 	rm -rf public/
 	rm -rf resources/
+	rm -rf static/css/tailwind.css
