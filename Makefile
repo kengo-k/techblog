@@ -20,4 +20,3 @@ build:
 clean:
 	rm -rf public/
 	rm -rf resources/
-	rm -rf static/css/tailwind.css
