@@ -1,33 +1,33 @@
 {{- $paginator := .paginator -}}
 {{ range $paginator.Pages }}
 <article class="border-b border-gray-100 pb-8 mb-8 last:border-b-0">
-  <div class="flex gap-6">
-    <div class="w-48 flex-shrink-0">
-      <div class="w-full h-32 bg-gray-200 rounded flex items-center justify-center">
-        <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-        </svg>
+  <a href="{{ .Permalink }}" class="block hover:bg-blue-50 transition-colors p-4 -m-4 rounded">
+    <div class="flex gap-6">
+      <div class="w-48 flex-shrink-0">
+        <div class="w-full h-32 bg-gray-200 rounded flex items-center justify-center">
+          <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+        </div>
       </div>
-    </div>
-    <div class="flex-1">
-      <a href="{{ .Permalink }}" class="block">
+      <div class="flex-1">
         <h2 class="text-xl font-medium mb-3 text-gray-900 hover:text-gray-600 transition-colors">
           {{ if .Draft }}<svg class="inline-block w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>{{ end }}{{ .Title }}
         </h2>
-      </a>
-      <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ if .Description }}{{ .Description }}{{ else }}{{ .Summary }}{{ end }}</p>
-      <div class="flex items-center justify-between text-xs text-gray-500">
-        <div class="flex gap-2">
-          {{ range .Params.tags }}
-          <span class="bg-gray-100 px-2 py-1 rounded">
-            {{ . }}
-          </span>
-          {{ end }}
+        <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ if .Description }}{{ .Description }}{{ else }}{{ .Summary }}{{ end }}</p>
+        <div class="flex items-center justify-between text-xs text-gray-500">
+          <div class="flex gap-2">
+            {{ range .Params.tags }}
+            <span class="bg-gray-100 px-2 py-1 rounded">
+              {{ . }}
+            </span>
+            {{ end }}
+          </div>
+          <span>{{ cond (eq site.Language.Lang "en") (.Date.Format "January 2, 2006") (.Date.Format "2006年1月2日") }}</span>
         </div>
-        <span>{{ cond (eq site.Language.Lang "en") (.Date.Format "January 2, 2006") (.Date.Format "2006年1月2日") }}</span>
       </div>
     </div>
-  </div>
+  </a>
 </article>
 {{ end }}
 

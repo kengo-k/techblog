@@ -1,134 +1,185 @@
-<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- ノイズパターン用のフィルター -->
-    <filter id="noiseFilter" x="0%" y="0%" width="100%" height="100%">
-      <feTurbulence baseFrequency="0.9" numOctaves="4" result="noise"/>
+    <style>
+      <![CDATA[
+      /* ========== 設定値（ここを変更するだけで全体調整可能） ========== */
+      svg {
+        --base-color: #fafbff;           /* ベース背景色 */
+        --primary-color: #667eea;        /* メインテクスチャ色 */
+        --secondary-color: #4facfe;      /* サブテクスチャ色 */
+
+        /* 透明度設定（0.001〜1.0で調整） */
+        --pattern-opacity-1: 0.025;     /* 45度斜線の透明度 */
+        --pattern-opacity-2: 0.02;      /* -45度斜線の透明度 */
+        --noise-opacity: 0.12;          /* ノイズの透明度 */
+        --dots-opacity: 0.015;          /* 点々の透明度 */
+
+        /* サイズ設定 */
+        --line-width: 0.3;              /* 線の太さ */
+        --dot-size-small: 0.3;          /* 小さい点のサイズ */
+        --dot-size-medium: 0.4;         /* 中くらい点のサイズ */
+        --dot-size-large: 0.5;          /* 大きい点のサイズ */
+
+        /* ノイズ設定 */
+        --noise-frequency: 0.8;         /* ノイズの細かさ */
+        --noise-octaves: 2;             /* ノイズの複雑さ */
+      }
+
+      .base-bg { fill: var(--base-color); }
+      .pattern-1 { opacity: var(--pattern-opacity-1); stroke: var(--primary-color); stroke-width: var(--line-width); }
+      .pattern-2 { opacity: var(--pattern-opacity-2); stroke: var(--secondary-color); stroke-width: var(--line-width); }
+      .noise-layer { opacity: var(--noise-opacity); fill: var(--primary-color); }
+      .dots-layer { opacity: var(--dots-opacity); }
+      .dot-primary { fill: var(--primary-color); }
+      .dot-secondary { fill: var(--secondary-color); }
+      ]]>
+    </style>
+
+    <!-- 微細ノイズフィルター -->
+    <filter id="seamlessNoise" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence baseFrequency="0.8" numOctaves="2" result="noise" seed="5"/>
       <feColorMatrix in="noise" type="saturate" values="0"/>
       <feComponentTransfer>
-        <feFuncA type="discrete" tableValues="0 .1 .2 .05 .15 .25 .3 .1 .05"/>
+        <feFuncA type="discrete" tableValues="0 .008 .015 .005 .012 .02"/>
       </feComponentTransfer>
     </filter>
-
-    <filter id="fineNoiseFilter" x="0%" y="0%" width="100%" height="100%">
-      <feTurbulence baseFrequency="2.5" numOctaves="2" result="finegrain"/>
-      <feColorMatrix in="finegrain" type="saturate" values="0"/>
-      <feComponentTransfer>
-        <feFuncA type="discrete" tableValues="0 .05 .1 .02 .08 .12 .15 .05 .02"/>
-      </feComponentTransfer>
-    </filter>
-
-    <!-- グラデーション定義 -->
-    <radialGradient id="subtleGrad1" cx="30%" cy="30%" r="60%">
-      <stop offset="0%" style="stop-color:#667eea;stop-opacity:0.03" />
-      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:0.01" />
-    </radialGradient>
-
-    <radialGradient id="subtleGrad2" cx="70%" cy="60%" r="50%">
-      <stop offset="0%" style="stop-color:#f093fb;stop-opacity:0.02" />
-      <stop offset="100%" style="stop-color:#f5576c;stop-opacity:0.008" />
-    </radialGradient>
-
-    <linearGradient id="subtleGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:0.025" />
-      <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:0.005" />
-    </linearGradient>
   </defs>
 
-  <!-- 背景 -->
-  <rect width="400" height="300" fill="#fafafa"/>
+  <!-- ベース背景 -->
+  <rect width="40" height="40" class="base-bg"/>
 
-  <!-- 微細なノイズレイヤー -->
-  <rect width="400" height="300" fill="#f0f0f0" filter="url(#fineNoiseFilter)" opacity="0.4"/>
+  <!-- 45度斜線パターン（シームレス） -->
+  <g class="pattern-1">
+    <!-- 左上から右下への斜線 -->
+    <line x1="0" y1="0" x2="8" y2="8"/>
+    <line x1="8" y1="0" x2="16" y2="8"/>
+    <line x1="16" y1="0" x2="24" y2="8"/>
+    <line x1="24" y1="0" x2="32" y2="8"/>
+    <line x1="32" y1="0" x2="40" y2="8"/>
+    <!-- 境界を跨ぐ線（シームレス対応） -->
+    <line x1="-8" y1="0" x2="0" y2="8"/>
+    <line x1="40" y1="0" x2="48" y2="8"/>
 
-  <!-- メインノイズテクスチャ -->
-  <rect width="400" height="300" fill="#e8e8e8" filter="url(#noiseFilter)" opacity="0.3"/>
+    <line x1="0" y1="8" x2="8" y2="16"/>
+    <line x1="8" y1="8" x2="16" y2="16"/>
+    <line x1="16" y1="8" x2="24" y2="16"/>
+    <line x1="24" y1="8" x2="32" y2="16"/>
+    <line x1="32" y1="8" x2="40" y2="16"/>
+    <line x1="-8" y1="8" x2="0" y2="16"/>
+    <line x1="40" y1="8" x2="48" y2="16"/>
 
-  <!-- ランダムドットパターン1 (細かい) -->
-  <g opacity="0.15">
-    <circle cx="23" cy="45" r="0.3" fill="#667eea"/>
-    <circle cx="67" cy="23" r="0.2" fill="#764ba2"/>
-    <circle cx="89" cy="78" r="0.4" fill="#f5576c"/>
-    <circle cx="134" cy="56" r="0.2" fill="#4facfe"/>
-    <circle cx="156" cy="91" r="0.3" fill="#00f2fe"/>
-    <circle cx="178" cy="34" r="0.2" fill="#f093fb"/>
-    <circle cx="203" cy="67" r="0.4" fill="#667eea"/>
-    <circle cx="245" cy="89" r="0.2" fill="#764ba2"/>
-    <circle cx="267" cy="12" r="0.3" fill="#f5576c"/>
-    <circle cx="289" cy="56" r="0.2" fill="#4facfe"/>
-    <circle cx="312" cy="78" r="0.4" fill="#00f2fe"/>
-    <circle cx="334" cy="45" r="0.2" fill="#f093fb"/>
-    <circle cx="356" cy="23" r="0.3" fill="#667eea"/>
-    <circle cx="378" cy="67" r="0.2" fill="#764ba2"/>
+    <line x1="0" y1="16" x2="8" y2="24"/>
+    <line x1="8" y1="16" x2="16" y2="24"/>
+    <line x1="16" y1="16" x2="24" y2="24"/>
+    <line x1="24" y1="16" x2="32" y2="24"/>
+    <line x1="32" y1="16" x2="40" y2="24"/>
+    <line x1="-8" y1="16" x2="0" y2="24"/>
+    <line x1="40" y1="16" x2="48" y2="24"/>
 
-    <circle cx="45" cy="123" r="0.2" fill="#f5576c"/>
-    <circle cx="78" cy="145" r="0.3" fill="#4facfe"/>
-    <circle cx="123" cy="134" r="0.2" fill="#00f2fe"/>
-    <circle cx="167" cy="156" r="0.4" fill="#f093fb"/>
-    <circle cx="189" cy="178" r="0.2" fill="#667eea"/>
-    <circle cx="234" cy="123" r="0.3" fill="#764ba2"/>
-    <circle cx="256" cy="145" r="0.2" fill="#f5576c"/>
-    <circle cx="289" cy="167" r="0.4" fill="#4facfe"/>
-    <circle cx="312" cy="189" r="0.2" fill="#00f2fe"/>
-    <circle cx="345" cy="134" r="0.3" fill="#f093fb"/>
-    <circle cx="378" cy="156" r="0.2" fill="#667eea"/>
+    <line x1="0" y1="24" x2="8" y2="32"/>
+    <line x1="8" y1="24" x2="16" y2="32"/>
+    <line x1="16" y1="24" x2="24" y2="32"/>
+    <line x1="24" y1="24" x2="32" y2="32"/>
+    <line x1="32" y1="24" x2="40" y2="32"/>
+    <line x1="-8" y1="24" x2="0" y2="32"/>
+    <line x1="40" y1="24" x2="48" y2="32"/>
 
-    <circle cx="34" cy="234" r="0.3" fill="#764ba2"/>
-    <circle cx="67" cy="256" r="0.2" fill="#f5576c"/>
-    <circle cx="89" cy="278" r="0.4" fill="#4facfe"/>
-    <circle cx="123" cy="245" r="0.2" fill="#00f2fe"/>
-    <circle cx="156" cy="267" r="0.3" fill="#f093fb"/>
-    <circle cx="189" cy="234" r="0.2" fill="#667eea"/>
-    <circle cx="223" cy="256" r="0.4" fill="#764ba2"/>
-    <circle cx="245" cy="278" r="0.2" fill="#f5576c"/>
-    <circle cx="278" cy="245" r="0.3" fill="#4facfe"/>
-    <circle cx="312" cy="267" r="0.2" fill="#00f2fe"/>
-    <circle cx="345" cy="234" r="0.4" fill="#f093fb"/>
-    <circle cx="367" cy="256" r="0.2" fill="#667eea"/>
+    <line x1="0" y1="32" x2="8" y2="40"/>
+    <line x1="8" y1="32" x2="16" y2="40"/>
+    <line x1="16" y1="32" x2="24" y2="40"/>
+    <line x1="24" y1="32" x2="32" y2="40"/>
+    <line x1="32" y1="32" x2="40" y2="40"/>
+    <line x1="-8" y1="32" x2="0" y2="40"/>
+    <line x1="40" y1="32" x2="48" y2="40"/>
+
+    <!-- 縦方向の境界対応 -->
+    <line x1="0" y1="-8" x2="8" y2="0"/>
+    <line x1="8" y1="-8" x2="16" y2="0"/>
+    <line x1="16" y1="-8" x2="24" y2="0"/>
+    <line x1="24" y1="-8" x2="32" y2="0"/>
+    <line x1="32" y1="-8" x2="40" y2="0"/>
+
+    <line x1="0" y1="40" x2="8" y2="48"/>
+    <line x1="8" y1="40" x2="16" y2="48"/>
+    <line x1="16" y1="40" x2="24" y2="48"/>
+    <line x1="24" y1="40" x2="32" y2="48"/>
+    <line x1="32" y1="40" x2="40" y2="48"/>
   </g>
 
-  <!-- ランダムドットパターン2 (中程度) -->
-  <g opacity="0.08">
-    <circle cx="56" cy="67" r="0.6" fill="#667eea"/>
-    <circle cx="145" cy="23" r="0.5" fill="#f5576c"/>
-    <circle cx="234" cy="89" r="0.7" fill="#4facfe"/>
-    <circle cx="312" cy="34" r="0.5" fill="#f093fb"/>
-    <circle cx="78" cy="178" r="0.6" fill="#764ba2"/>
-    <circle cx="189" cy="145" r="0.5" fill="#00f2fe"/>
-    <circle cx="267" cy="234" r="0.7" fill="#667eea"/>
-    <circle cx="345" cy="189" r="0.5" fill="#f5576c"/>
+  <!-- -45度斜線パターン（シームレス） -->
+  <g class="pattern-2">
+    <!-- 右上から左下への斜線 -->
+    <line x1="8" y1="0" x2="0" y2="8"/>
+    <line x1="16" y1="0" x2="8" y2="8"/>
+    <line x1="24" y1="0" x2="16" y2="8"/>
+    <line x1="32" y1="0" x2="24" y2="8"/>
+    <line x1="40" y1="0" x2="32" y2="8"/>
+    <!-- 境界を跨ぐ線（シームレス対応） -->
+    <line x1="48" y1="0" x2="40" y2="8"/>
+    <line x1="0" y1="0" x2="-8" y2="8"/>
+
+    <line x1="8" y1="8" x2="0" y2="16"/>
+    <line x1="16" y1="8" x2="8" y2="16"/>
+    <line x1="24" y1="8" x2="16" y2="16"/>
+    <line x1="32" y1="8" x2="24" y2="16"/>
+    <line x1="40" y1="8" x2="32" y2="16"/>
+    <line x1="48" y1="8" x2="40" y2="16"/>
+    <line x1="0" y1="8" x2="-8" y2="16"/>
+
+    <line x1="8" y1="16" x2="0" y2="24"/>
+    <line x1="16" y1="16" x2="8" y2="24"/>
+    <line x1="24" y1="16" x2="16" y2="24"/>
+    <line x1="32" y1="16" x2="24" y2="24"/>
+    <line x1="40" y1="16" x2="32" y2="24"/>
+    <line x1="48" y1="16" x2="40" y2="24"/>
+    <line x1="0" y1="16" x2="-8" y2="24"/>
+
+    <line x1="8" y1="24" x2="0" y2="32"/>
+    <line x1="16" y1="24" x2="8" y2="32"/>
+    <line x1="24" y1="24" x2="16" y2="32"/>
+    <line x1="32" y1="24" x2="24" y2="32"/>
+    <line x1="40" y1="24" x2="32" y2="32"/>
+    <line x1="48" y1="24" x2="40" y2="32"/>
+    <line x1="0" y1="24" x2="-8" y2="32"/>
+
+    <line x1="8" y1="32" x2="0" y2="40"/>
+    <line x1="16" y1="32" x2="8" y2="40"/>
+    <line x1="24" y1="32" x2="16" y2="40"/>
+    <line x1="32" y1="32" x2="24" y2="40"/>
+    <line x1="40" y1="32" x2="32" y2="40"/>
+    <line x1="48" y1="32" x2="40" y2="40"/>
+    <line x1="0" y1="32" x2="-8" y2="40"/>
+
+    <!-- 縦方向の境界対応 -->
+    <line x1="8" y1="-8" x2="0" y2="0"/>
+    <line x1="16" y1="-8" x2="8" y2="0"/>
+    <line x1="24" y1="-8" x2="16" y2="0"/>
+    <line x1="32" y1="-8" x2="24" y2="0"/>
+    <line x1="40" y1="-8" x2="32" y2="0"/>
+
+    <line x1="8" y1="40" x2="0" y2="48"/>
+    <line x1="16" y1="40" x2="8" y2="48"/>
+    <line x1="24" y1="40" x2="16" y2="48"/>
+    <line x1="32" y1="40" x2="24" y2="48"/>
+    <line x1="40" y1="40" x2="32" y2="48"/>
   </g>
 
-  <!-- 微細な線要素 -->
-  <g opacity="0.04" stroke-width="0.1">
-    <line x1="0" y1="50" x2="400" y2="52" stroke="#667eea"/>
-    <line x1="0" y1="100" x2="400" y2="98" stroke="#f5576c"/>
-    <line x1="0" y1="150" x2="400" y2="152" stroke="#4facfe"/>
-    <line x1="0" y1="200" x2="400" y2="198" stroke="#764ba2"/>
-    <line x1="0" y1="250" x2="400" y2="252" stroke="#f093fb"/>
+  <!-- 微細ノイズオーバーレイ -->
+  <rect width="40" height="40" class="noise-layer" filter="url(#seamlessNoise)"/>
 
-    <line x1="50" y1="0" x2="52" y2="300" stroke="#00f2fe"/>
-    <line x1="100" y1="0" x2="98" y2="300" stroke="#667eea"/>
-    <line x1="150" y1="0" x2="152" y2="300" stroke="#f5576c"/>
-    <line x1="200" y1="0" x2="198" y2="300" stroke="#4facfe"/>
-    <line x1="250" y1="0" x2="252" y2="300" stroke="#764ba2"/>
-    <line x1="300" y1="0" x2="298" y2="300" stroke="#f093fb"/>
-    <line x1="350" y1="0" x2="352" y2="300" stroke="#00f2fe"/>
+  <!-- シームレス対応の点々 -->
+  <g class="dots-layer">
+    <!-- 内部の点 -->
+    <circle cx="12" cy="8" r="var(--dot-size-small)" class="dot-primary"/>
+    <circle cx="28" cy="15" r="var(--dot-size-medium)" class="dot-secondary"/>
+    <circle cx="8" cy="25" r="var(--dot-size-small)" class="dot-primary"/>
+    <circle cx="32" cy="32" r="var(--dot-size-medium)" class="dot-secondary"/>
+    <circle cx="20" cy="30" r="var(--dot-size-small)" class="dot-primary"/>
+
+    <!-- 境界に配置される点（シームレス対応） -->
+    <circle cx="0" cy="10" r="var(--dot-size-small)" class="dot-secondary"/>
+    <circle cx="40" cy="10" r="var(--dot-size-small)" class="dot-secondary"/>
+    <circle cx="15" cy="0" r="var(--dot-size-small)" class="dot-primary"/>
+    <circle cx="15" cy="40" r="var(--dot-size-small)" class="dot-primary"/>
   </g>
-
-  <!-- 微細なテクスチャドット -->
-  <g opacity="0.06">
-    <circle cx="112" cy="67" r="0.15" fill="#667eea"/>
-    <circle cx="278" cy="123" r="0.15" fill="#f5576c"/>
-    <circle cx="334" cy="178" r="0.15" fill="#4facfe"/>
-    <circle cx="89" cy="234" r="0.15" fill="#764ba2"/>
-    <circle cx="201" cy="45" r="0.15" fill="#f093fb"/>
-    <circle cx="167" cy="267" r="0.15" fill="#00f2fe"/>
-    <circle cx="245" cy="156" r="0.15" fill="#667eea"/>
-    <circle cx="123" cy="189" r="0.15" fill="#f5576c"/>
-  </g>
-
-  <!-- サブトルなグラデーション領域 -->
-  <ellipse cx="120" cy="80" rx="60" ry="40" fill="url(#subtleGrad1)"/>
-  <ellipse cx="280" cy="180" rx="50" ry="60" fill="url(#subtleGrad2)"/>
-  <ellipse cx="200" cy="230" rx="70" ry="35" fill="url(#subtleGrad3)"/>
 </svg>

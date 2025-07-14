@@ -7,7 +7,7 @@
     <meta name="description" content="{{ block "description" . }}{{ .Site.Params.description }}{{ end }}">
 
     <!-- Tailwind CSS -->
-    <link rel="stylesheet" href="{{ "css/tailwind.css" | relURL }}">
+    <link rel="stylesheet" href="{{ "css/tailwind.css" | relURL }}?v={{ now.Unix }}">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -123,9 +123,9 @@
 
     </style>
 </head>
-<body class="bg-white flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen">
     <!-- Header -->
-    <header class="bg-white border-b border-gray-200">
+    <header class="border-b border-gray-200">
       <div class="container mx-auto px-4 py-12 relative">
         <!-- Search Icon -->
         <a href="{{ "/search/" | relLangURL }}" class="absolute top-16 right-16 text-gray-500 hover:text-gray-700" aria-label="Search">
@@ -161,7 +161,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200">
+    <footer class="border-t border-gray-200">
       <div class="container mx-auto px-4 py-6 text-center text-sm text-gray-500">
         © {{ now.Format "2006" }} {{ .Site.Title }}. All rights reserved.
       </div>
