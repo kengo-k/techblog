@@ -1,4 +1,3 @@
 ---
 title: "アーカイブ"
-layout: "archives"
 ---
