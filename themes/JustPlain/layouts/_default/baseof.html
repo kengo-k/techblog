@@ -152,6 +152,57 @@
             color: #1d4ed8;
         }
 
+        .prose table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .prose table th {
+            background-color: #f8fafc;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 0.875rem;
+        }
+
+        .prose table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f3f4f6;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .prose table tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .prose table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .prose table th:first-child {
+            border-top-left-radius: 0.5rem;
+        }
+
+        .prose table th:last-child {
+            border-top-right-radius: 0.5rem;
+        }
+
+        .prose table code {
+            background-color: #f1f5f9;
+            color: #475569;
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+            font-size: 0.8rem;
+        }
+
         /* TOC links should not have underline or color change */
         nav .toc-ol a {
             color: inherit;
