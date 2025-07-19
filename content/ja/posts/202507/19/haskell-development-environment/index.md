@@ -251,11 +251,11 @@ cabal run haskell-api
 
 `cabal freeze`を実行すると`cabal.project.freeze`ファイルが生成される。このファイルには依存関係の具体的なバージョンが記録されており、Node.js の`package-lock.json`と同じ役割を持つ。これによりチーム開発で全員が同じバージョンの依存関係を使用でき、再現可能なビルドが保証される。
 
-ブラウザから `http://localhost:8080/messages` にアクセスしてメッセージが表示されれば OK`。
+ブラウザから `http://localhost:8080/messages` にアクセスしてメッセージが表示されれば OK。
 
 ## VS Code 統合設定
 
-まずは Haskell の拡張機能をインストールする。Haskell で検索して一番上に出てくるはずである（haskell.haskell という名前の拡張機能が見つかる）。そして`.vscode/settings.json`に下記の内容を設定する。
+まずは Haskell の拡張機能をインストールする。拡張機能の一覧で Haskell で検索して一番上に出てくるはずである（haskell.haskell という名前の拡張機能が見つかる）。そして`.vscode/settings.json`に下記の内容を設定する。
 
 ```json
 {
@@ -275,3 +275,7 @@ cabal run haskell-api
   }
 }
 ```
+
+フォーマッターとして`fourmolu`を指定している。これは明示的にインストールはしていないが HLS（Haskell Language Server）に内蔵されているので問題はない（HLS は`ghcup`で GHC をインストールした際に同時にインストール済み）。
+
+HLS が起動していればファイル保存時に自動でフォーマットが行われる。HLS の起動確認は VS Code の Output パネルで Haskell を選択して表示される内容で確認できる。起動していない場合は VS Code の再起動や、**Cmd + Shift + P**でコマンドパレットを開き`Haskell: Restart Haskell LSP Server`を実行してみると良い。
