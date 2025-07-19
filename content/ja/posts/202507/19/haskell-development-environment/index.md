@@ -56,7 +56,7 @@ ghc --version     # 9.10.1が表示されることを確認
 cabal --version   # 3.14.1.0が表示されることを確認
 ```
 
-次にプロジェクトを作る。
+次にプロジェクトを作る。適当なディレクトリを作成して`cabal init`を実行する（haskell-api の箇所は任意の名前で良い）。
 
 ```text
 # プロジェクトディレクトリ作成
@@ -67,51 +67,29 @@ cd haskell-api
 cabal init --non-interactive \
            --package-name=haskell-api \
            --version=1.0.0 \
-           --license=MIT \
            --language=GHC2024 \
            --application-dir=app \
            --source-dir=src
 ```
 
-`cabal.project`ファイルを作成して、バージョン固定と最適化を設定する。
+実行後、以下のようなディレクトリ構成が作成されている。
 
 ```text
-packages: .
-
--- コンパイラ固定
-with-compiler: ghc-9.10.1
-
--- 再現可能ビルドのための時点固定
-index-state: 2024-12-15T00:00:00Z
-
--- ビルド設定
-tests: True
-optimization: True
-jobs: $ncpus
-
--- 依存関係制約
-constraints:
-  base >=4.20.0.0 && <4.21,
-  text >=2.1 && <2.2,
-  aeson >=2.2.3.0 && <2.3,
-  servant >=0.20.2 && <0.21,
-  servant-server >=0.20.2 && <0.21,
-  warp >=3.4.1 && <3.5
-
--- 開発時警告設定
-package *
-  ghc-options: -Wall -Wcompat -Wredundant-constraints
+$ tree .
+.
+├── app
+│   └── Main.hs
+├── CHANGELOG.md
+└── haskell-api.cabal
 ```
 
-`haskell-api.cabal`ファイルを編集し依存関係を追加する
+`haskell-api.cabal`はプロジェクトのビルド設定ファイルで、依存関係やコンパイルオプションなどが記述されている。Node.js の`package.json`のようなものだと考えればよい。このファイルを編集し使用するライブラリなどの依存関係を追加する。なお、`npm install`のような自動で追記してくれる仕組みはない。
 
 ```text
 cabal-version: 3.0
 name: haskell-api
 version: 1.0.0
-synopsis: シンプルなHaskell WebAPI
-license: MIT
-maintainer: your.email@example.com
+synopsis: haskell api example
 build-type: Simple
 
 library
@@ -151,7 +129,25 @@ test-suite haskell-api-test
     ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
 ```
 
-ここからソースコードの作成に入る。ちなみに、現時点で知識ゼロなので内容については何もわからない。ひとまずビルドできて動けば良い。
+さらに`cabal.project`ファイルを作成して、コンパイラのバージョン指定や最適化の設定などを記述しておく。
+
+```text
+packages: .
+
+-- コンパイラバージョンの指定
+with-compiler: ghc-9.10.1
+
+-- ビルド設定
+tests: True
+optimization: True
+jobs: $ncpus
+
+-- 開発時警告設定
+package *
+  ghc-options: -Wall -Wcompat -Wredundant-constraints
+```
+
+ここからソースコードの作成に入る。以下のファイル群を作成していく。
 
 **src/Api.hs** - API 定義
 
@@ -246,26 +242,16 @@ cabal build
 # テスト実行
 cabal test
 
+# 依存関係のバージョンを固定（推奨）
+cabal freeze
+
 # アプリケーション起動
 cabal run haskell-api
 ```
 
-ブラウザから下記の URL にアクセスする。
+`cabal freeze`を実行すると`cabal.project.freeze`ファイルが生成される。このファイルには依存関係の具体的なバージョンが記録されており、Node.js の`package-lock.json`と同じ役割を持つ。これによりチーム開発で全員が同じバージョンの依存関係を使用でき、再現可能なビルドが保証される。
 
-```bash
-# メッセージ取得
-curl http://localhost:8080/messages
-
-# ヘルスチェック
-curl http://localhost:8080/health
-
-# 新しいメッセージ投稿
-curl -X POST http://localhost:8080/messages \
-  -H "Content-Type: application/json" \
-  -d '{"content": "Hello from curl!", "author": "Terminal"}'
-```
-
-ブラウザにメッセージが表示されれば OK。
+ブラウザから `http://localhost:8080/messages` にアクセスしてメッセージが表示されれば OK`。
 
 ## VS Code 統合設定
 
