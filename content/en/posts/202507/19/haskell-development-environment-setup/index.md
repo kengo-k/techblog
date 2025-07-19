@@ -288,15 +288,6 @@ Then run the following command in your project's root directory:
 
 ```text
 ghcid \
-  --command="cabal repl lib:haskell-api exe:haskell-api" \
-  --test=":main" \
-  --restart="src"
-```
-
-If the above command gives you errors, use this alternative:
-
-```text
-ghcid \
   --command="cabal repl exe:haskell-api" \
   --test=":main" \
   --restart="src" \
