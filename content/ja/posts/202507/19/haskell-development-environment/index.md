@@ -2,7 +2,7 @@
 title: "Haskell開発環境構築メモ"
 date: 2025-07-19
 tags: ["Haskell"]
-description: "知識ゼロから新しくHaskellの勉強をスタートできるようになるための環境構築の手順まとめ。開発ツールの導入、自動フォーマット、ホットリロードまで対応した。"
+description: "知識ゼロから新しくHaskellの勉強をスタートできるようになるための環境構築の手順まとめ。開発ツールの導入、自動フォーマット、（疑似）ホットリロードまで対応した。"
 draft: true
 ---
 
@@ -155,10 +155,11 @@ package *
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Api where
 
-import Data.Aeson (FromJSON, ToJSON)
+import Data.Aeson (ToJSON)
 import Data.Text (Text)
 import GHC.Generics (Generic)
 import Servant
@@ -170,13 +171,9 @@ data Message = Message
   } deriving (Eq, Show, Generic)
 
 instance ToJSON Message
-instance FromJSON Message
 
 -- API型定義
-type MessageAPI =
-       "messages" :> Get '[JSON] [Message]
-  :<|> "messages" :> ReqBody '[JSON] Message :> PostCreated '[JSON] Message
-  :<|> "health" :> Get '[JSON] Text
+type MessageAPI = "messages" :> Get '[JSON] [Message]
 
 -- サンプルデータ
 sampleMessages :: [Message]
@@ -185,17 +182,12 @@ sampleMessages =
   , Message "Servant is great!" "Bob"
   ]
 
--- ハンドラー実装
-messageHandlers :: Server MessageAPI
-messageHandlers = getMessages :<|> postMessage :<|> healthCheck
-  where
-    getMessages = return sampleMessages
-    postMessage msg = return msg  -- 実際のアプリではDBに保存
-    healthCheck = return "OK"
-
--- API定義
+-- ハンドラー実装とAPI定義
 messageAPI :: Proxy MessageAPI
 messageAPI = Proxy
+
+server :: Server MessageAPI
+server = return sampleMessages
 ```
 
 **app/Main.hs** - アプリケーションエントリポイント
@@ -212,7 +204,7 @@ main :: IO ()
 main = do
   putStrLn "🚀 Haskell APIサーバーを起動中..."
   putStrLn "📍 http://localhost:8080"
-  run 8080 (serve messageAPI messageHandlers)
+  run 8080 (serve messageAPI server)
 ```
 
 **test/Spec.hs** - テストスイート
@@ -276,6 +268,32 @@ cabal run haskell-api
 }
 ```
 
-フォーマッターとして`fourmolu`を指定している。これは明示的にインストールはしていないが HLS（Haskell Language Server）に内蔵されているので問題はない（HLS は`ghcup`で GHC をインストールした際に同時にインストール済み）。
+フォーマッターとして`fourmolu`を指定している。他のフォーマッターもあるが、現時点でこれがデファクトらしいのでこれを使う。明示的なインストールはしていないが HLS（Haskell Language Server）に内蔵されているので問題はない（HLS は`ghcup`で GHC をインストールした際に同時にインストール済み）。
 
 HLS が起動していればファイル保存時に自動でフォーマットが行われる。HLS の起動確認は VS Code の Output パネルで Haskell を選択して表示される内容で確認できる。起動していない場合は VS Code の再起動や、**Cmd + Shift + P**でコマンドパレットを開き`Haskell: Restart Haskell LSP Server`を実行してみると良い。
+
+## （疑似的な）ホットリロード対応
+
+Web アプリケーション開発では、コードを変更するたびにコンパイルエラーを確認するのは面倒である。Haskell では`ghcid`というツールを使ってファイル変更を監視し、自動的にコンパイル、再起動を行うことが可能。本来のホットリロードはアプリケーションを停止させずに、という意味なので、ここでは疑似的と表現している。
+
+まず`ghcid`をインストールする。これは開発ツールなのでグローバルにインストールする。
+
+```text
+cabal install ghcid
+```
+
+インストール後、`~/.cabal/bin/ghcid`にバイナリが作成されるため、PATH を通しておく。
+
+そしてプロジェクトのルートディレクトリで以下のコマンドを実行する。
+
+```text
+ghcid \
+  --command="cabal repl exe:haskell-api" \
+  --test=":main"
+```
+
+これで以下の動作が実現される：
+
+- **ファイル監視**: `src/`や`app/`内の Haskell ファイルを監視
+- **自動ビルド**: ファイル変更時に自動的にコンパイル
+- **サーバー再起動**: main を再実行してサーバーを再起動する
