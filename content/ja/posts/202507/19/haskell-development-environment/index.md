@@ -288,8 +288,19 @@ cabal install ghcid
 
 ```text
 ghcid \
+  --command="cabal repl lib:haskell-api exe:haskell-api" \
+  --test=":main" \
+  --restart="src"
+```
+
+もし上記でエラーが出る場合は、以下の代替コマンドを使用する。
+
+```text
+ghcid \
   --command="cabal repl exe:haskell-api" \
-  --test=":main"
+  --test=":main" \
+  --restart="src" \
+  --restart="app"
 ```
 
 これで以下の動作が実現される：
