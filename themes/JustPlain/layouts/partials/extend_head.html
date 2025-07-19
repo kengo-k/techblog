@@ -1,11 +1,16 @@
 <!-- Google Analytics -->
 {{ if and .Site.Params.googleAnalytics (not hugo.IsServer) }}
-<script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Params.googleAnalytics }}"></script>
+<script
+  async
+  src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Params.googleAnalytics }}"
+></script>
 <script>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', '{{ .Site.Params.googleAnalytics }}');
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag("js", new Date());
+  gtag("config", "{{ .Site.Params.googleAnalytics }}");
 </script>
 {{ end }}
 
@@ -23,7 +28,7 @@
     font-size: 12px;
     font-weight: bold;
     z-index: 9999;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   }
 </style>
 <div class="dev-indicator">🚧 DEV SERVER</div>
@@ -71,9 +76,13 @@
     margin-left: 1rem;
   }
 
-  /* Slightly darker background for code blocks to distinguish from page */
+  /* Code block styling with programming font */
   .prose pre.chroma {
     background-color: #eef1f4 !important; /* Slightly darker than #f6f8fa */
+    font-family: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono",
+      "Source Code Pro", "Menlo", "Consolas", monospace !important;
+    font-size: 0.875rem !important; /* 14px equivalent */
+    line-height: 1.5 !important;
   }
 
   /* ---- Align line numbers with code lines ---- */
@@ -95,6 +104,8 @@
     padding: 0.125rem 0.25rem !important;
     border-radius: 0.25rem !important;
     font-size: 0.875em !important;
+    font-family: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono",
+      "Source Code Pro", "Menlo", "Consolas", monospace !important;
   }
 
   /* Header height adjustment - reduce vertical padding */

@@ -12,6 +12,9 @@ help:
 serve: clean
 	npm run dev
 
+css:
+	npm run build:css:watch
+
 # Build for production
 build:
 	npm run build
