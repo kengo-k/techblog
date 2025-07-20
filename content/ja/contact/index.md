@@ -3,6 +3,7 @@ title: "お問い合わせ"
 date: 2025-07-18
 description: "当ブログへのお問い合わせ"
 layout: contact
+draft: true
 _build:
   list: false
 ---
