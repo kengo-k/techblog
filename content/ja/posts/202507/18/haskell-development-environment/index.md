@@ -1,6 +1,6 @@
 ---
 title: "Haskell開発環境構築メモ"
-date: 2025-07-19
+date: 2025-07-18
 tags: ["Haskell"]
 description: "知識ゼロから新しくHaskellの勉強をスタートできるようになるための環境構築の手順まとめ。開発ツールの導入、自動フォーマット、（疑似）ホットリロードまで対応した。"
 draft: true
