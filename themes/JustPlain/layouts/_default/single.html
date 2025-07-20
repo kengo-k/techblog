@@ -30,7 +30,7 @@
 
         <!-- Article Content -->
         <div class="prose prose-lg max-w-none">
-          {{ if and .TableOfContents (gt (len .TableOfContents) 50) }}
+          {{ if and .TableOfContents (gt (len .TableOfContents) 50) (ne .Params.toc false) }}
           {{ $toc := replace (replace .TableOfContents "<ul>" "<ol class=\"toc-ol ml-4\">") "</ul>" "</ol>" | safeHTML }}
           <nav class="mb-8 p-4 bg-gray-50 border-l-4 border-gray-200 rounded-md">
             {{ $toc }}
