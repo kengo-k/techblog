@@ -1,6 +1,6 @@
 ---
 title: "Haskell Development Environment Setup Guide"
-date: 2025-07-19
+date: 2025-07-18
 tags: ["Haskell"]
 description: "A complete guide to setting up a Haskell development environment from scratch, including development tools, auto-formatting, and pseudo hot-reload functionality."
 draft: true
