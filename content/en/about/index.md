@@ -9,14 +9,9 @@ _build:
   list: false
 ---
 
-## Site Overview
+This is a blog where a software engineer writes about technical topics, things I'm personally interested in, programming languages, and service development records. It's primarily for my own notes.
 
-This site is a technical blog aimed at documenting learning content and development environment setup procedures as personal notes.
+If you have any questions or comments, please contact us through our [contact page](/en/contact/).
 
-## About the Author
-
-This blog is personally operated by an engineer with an interest in technology.
-
-## Contact
-
-If you have any questions or comments, please contact us through our contact page.
+Operator: kengo-k  
+GitHub: https://github.com/kengo-k
