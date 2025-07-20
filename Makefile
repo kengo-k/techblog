@@ -16,7 +16,7 @@ css:
 	npm run build:css:watch
 
 # Build for production
-build:
+build: clean
 	npm run build
 
 # Clean build artifacts
