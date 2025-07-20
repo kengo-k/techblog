@@ -27,7 +27,9 @@
         <div class="prose prose-lg max-w-none">
           {{ .Content }}
           
+          {{ if eq .Type "contact" }}
           <p><strong><a href="mailto:{{ .Site.Params.contactEmail }}">{{ .Site.Params.contactEmail }}</a></strong></p>
+          {{ end }}
         </div>
       </article>
     </main>
