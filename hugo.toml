@@ -26,6 +26,7 @@ enableEmoji = true
 description = "個人的に気になったことのメモなど"
 author = 'kengo'
 googleAnalytics = "G-GW5ZZD3TH2"
+contactEmail = "contact@just-plain-notes.blog"
 showToc = true
 showCodeCopyButtons = true
 showReadingTime = true
