@@ -8,18 +8,9 @@
     <main class="lg:col-span-3 bg-white shadow-lg rounded-lg">
       <article class="p-8">
         <!-- Article Header -->
-        <header class="mb-8">
-          <div class="flex justify-between items-center mb-4">
+        <header class="mb-4">
+          <div class="flex justify-between items-center">
             <h1 class="text-2xl font-bold text-gray-700">{{ .Title }}</h1>
-          </div>
-
-          <!-- Tags -->
-          <div class="flex flex-wrap gap-2">
-            {{ range .Params.tags }}
-            <span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">
-              {{ . }}
-            </span>
-            {{ end }}
           </div>
         </header>
 
