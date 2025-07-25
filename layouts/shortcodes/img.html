@@ -1,21 +1,20 @@
 {{- $image := .Page.Resources.GetMatch (.Get "src") -}}
-{{- $width := .Get "width" -}}
+{{- $resize := .Get "resize" -}}
 {{- $alt := .Get "alt" | default "" -}}
 {{- $caption := .Get "caption" | default "" -}}
 
 {{- if $image -}}
   {{- $webp := "" -}}
-  {{- if $width -}}
-    {{- $processed := $image.Resize (printf "%sx" $width) -}}
+  {{- if $resize -}}
+    {{- $processed := $image.Resize (printf "%sx" $resize) -}}
     {{- $webp = $processed.Process "webp q5" -}}
   {{- else -}}
     {{- $webp = $image.Process "webp q5" -}}
   {{- end -}}
   
-  <figure{{ if or (.Get "class") (eq (.Get "align") "center") }} class="
+  <figure class="img-shortcode{{ if or (.Get "class") (eq (.Get "align") "center") }} 
              {{- if eq (.Get "align") "center" }}align-center {{ end }}
-             {{- with .Get "class" }}{{ . }}{{- end }}"
-  {{- end -}}>
+             {{- with .Get "class" }}{{ . }}{{- end }}{{ end }}">
     {{- if .Get "link" -}}
         <a href="{{ .Get "link" }}"{{ with .Get "target" }} target="{{ . }}"{{ end }}{{ with .Get "rel" }} rel="{{ . }}"{{ end }}>
     {{- end }}
