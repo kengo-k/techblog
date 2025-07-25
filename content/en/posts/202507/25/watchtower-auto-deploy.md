@@ -1,7 +1,7 @@
 ---
 title: "Automatically Deploy Local Applications with watchtower"
 date: 2025-07-25
-tags: [DevOps]
+tags: [DevOps, QNAP]
 description: "Notes for automatically deploying container applications on QNAP Container Station at home"
 toc: false
 ---

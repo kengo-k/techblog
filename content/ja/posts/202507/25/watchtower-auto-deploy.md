@@ -1,7 +1,7 @@
 ---
 title: "watchtowerでローカルアプリケーションを自動デプロイする"
 date: 2025-07-25
-tags: [DevOps]
+tags: [DevOps, QNAP]
 description: "自宅のQNAP Container Station上のコンテナアプリケーションを自動デプロイするためのメモです"
 toc: false
 ---
