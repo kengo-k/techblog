@@ -26,6 +26,7 @@ enableEmoji = true
 description = "個人的に気になったことのメモなど"
 author = 'kengo'
 googleAnalytics = "G-GW5ZZD3TH2"
+contactEmail = "contact@just-plain-notes.blog"
 showToc = true
 showCodeCopyButtons = true
 showReadingTime = true
@@ -66,6 +67,12 @@ Content = '技術情報とプログラミング'
     url = '/archives/'
     weight = 40
 
+  [[menu.main]]
+    identifier = 'contact'
+    name = 'Contact'
+    url = '/contact/'
+    weight = 50
+
 [taxonomies]
 tag = 'tags'
 
@@ -80,6 +87,11 @@ date = ["date", ":fileModTime"]
     noClasses = false
     style = "github"
     lineNos = false
+
+[sitemap]
+  changefreq = "weekly"
+  priority = 0.5
+  filename = "sitemap.xml"
 
 [outputs]
 home = ["HTML", "RSS", "JSON", "CALENDAR"]

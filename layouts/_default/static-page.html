@@ -1,0 +1,36 @@
+{{ define "main" }}
+<div>
+  <div class="container mx-auto px-4 py-12">
+    <div class="mb-4">
+      <a href="{{ "/" | relLangURL }}" class="text-sm text-gray-500 hover:text-gray-700">{{ if eq .Site.Language.Lang "en" }}← Back to Home{{ else }}← ホームへ戻る{{ end }}</a>
+    </div>
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
+    <main class="lg:col-span-3 bg-white shadow-lg rounded-lg">
+      <article class="p-8">
+        <!-- Article Header -->
+        <header class="mb-4">
+          <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-700">{{ .Title }}</h1>
+          </div>
+        </header>
+
+        <!-- Article Content -->
+        <div class="prose prose-lg max-w-none">
+          {{ .Content }}
+          
+          {{ if eq .Type "contact" }}
+          <p><strong><a href="mailto:{{ .Site.Params.contactEmail }}">{{ .Site.Params.contactEmail }}</a></strong></p>
+          {{ end }}
+        </div>
+      </article>
+    </main>
+
+    <div class="lg:col-span-1">
+      <div class="lg:sticky lg:top-20">
+        {{ partial "sidebar.html" . }}
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+{{ end }}

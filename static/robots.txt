@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://just-plain-notes.blog/sitemap.xml
+
+# Disallow admin paths (if any)
+Disallow: /admin/
+Disallow: /.git/

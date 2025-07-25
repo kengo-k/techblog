@@ -271,9 +271,19 @@
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-gray-200">
-      <div class="container mx-auto px-4 py-6 text-center text-sm text-gray-500">
-        © {{ now.Format "2006" }} {{ .Site.Title }}. All rights reserved.
+    <footer class="border-t border-gray-200" style="background-color: #9ca3af !important;">
+      <div class="container mx-auto px-4 py-6 text-center text-sm text-gray-600">
+        <!-- Footer Links -->
+        <div class="mb-4">
+            <a href="{{ "/about/" | relLangURL }}" class="text-gray-600 hover:text-gray-800">{{ if eq .Site.Language.Lang "en" }}About This Site{{ else }}このサイトについて{{ end }}</a>
+            <span class="mx-2">|</span>
+            <a href="{{ "/contact/" | relLangURL }}" class="text-gray-600 hover:text-gray-800">{{ if eq .Site.Language.Lang "en" }}Contact{{ else }}お問い合わせ{{ end }}</a>
+            <span class="mx-2">|</span>
+            <a href="{{ "/privacy/" | relLangURL }}" class="text-gray-600 hover:text-gray-800">{{ if eq .Site.Language.Lang "en" }}Privacy Policy{{ else }}プライバシーポリシー{{ end }}</a>
+        </div>
+        
+        <!-- Copyright -->
+        <div class="text-xs">© {{ now.Format "2006" }} {{ .Site.Title }}. All rights reserved.</div>
       </div>
     </footer>
   </body>
