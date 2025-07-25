@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
     <meta name="description" content="{{ block "description" . }}{{ .Site.Params.description }}{{ end }}">
+    <meta name="keywords" content="{{ if .Params.keywords }}{{ range $i, $e := .Params.keywords }}{{ if $i }}, {{ end }}{{ $e }}{{ end }}{{ else }}{{ range $i, $e := .Params.tags }}{{ if $i }}, {{ end }}{{ $e }}{{ end }}{{ end }}">
 
     <!-- Tailwind CSS -->
     <link rel="stylesheet" href="{{ "css/tailwind.css" | relURL }}?v={{ now.Unix }}">
