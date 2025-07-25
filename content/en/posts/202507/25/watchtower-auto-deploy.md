@@ -1,10 +1,9 @@
 ---
 title: "Automatically Deploy Local Applications with watchtower"
-date: 2025-07-20
+date: 2025-07-25
 tags: [DevOps]
 description: "Notes for automatically deploying container applications on QNAP Container Station at home"
 toc: false
-draft: true
 ---
 
 I recently discovered a tool called `watchtower`. Apparently, it monitors container registries and automatically redeploys when new images are detected. I use a QNAP NAS at home, which has an app called Container Station that allows you to easily run Docker containers on the NAS. I operate several applications on Container Station that are only for my personal use, not intended to be shown to others.

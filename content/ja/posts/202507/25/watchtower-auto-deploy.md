@@ -1,10 +1,9 @@
 ---
 title: "watchtowerでローカルアプリケーションを自動デプロイする"
-date: 2025-07-20
+date: 2025-07-25
 tags: [DevOps]
 description: "自宅のQNAP Container Station上のコンテナアプリケーションを自動デプロイするためのメモです"
 toc: false
-draft: true
 ---
 
 ひょんなことから `watchtower` なるツールがあることを知った。どうやらコンテナレジストリを監視して新しいイメージを検出すると自動で再デプロイしてくれるツールらしい。私は自宅で QNAP という NAS を使っているのだが、この NAS では Container Station というアプリが使えて、簡単に NAS 上で Docker コンテナを動かすことができる。私は Container Station 上で人に見せる前提ではない自分のためだけのアプリケーションをいくつか運用している。
