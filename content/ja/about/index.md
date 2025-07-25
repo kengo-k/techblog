@@ -4,7 +4,6 @@ date: 2025-07-18
 description: "当ブログの概要・運営者情報"
 layout: static-page
 type: page
-draft: true
 _build:
   list: false
 ---

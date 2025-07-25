@@ -4,7 +4,6 @@ date: 2025-07-18
 description: "Overview and information about this blog"
 layout: static-page
 type: page
-draft: true
 _build:
   list: false
 ---
