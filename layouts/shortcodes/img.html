@@ -7,9 +7,9 @@
   {{- $webp := "" -}}
   {{- if $width -}}
     {{- $processed := $image.Resize (printf "%sx" $width) -}}
-    {{- $webp = $processed.Process "webp" -}}
+    {{- $webp = $processed.Process "webp q5" -}}
   {{- else -}}
-    {{- $webp = $image.Process "webp" -}}
+    {{- $webp = $image.Process "webp q5" -}}
   {{- end -}}
   
   <figure{{ if or (.Get "class") (eq (.Get "align") "center") }} class="
