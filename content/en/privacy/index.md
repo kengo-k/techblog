@@ -4,7 +4,6 @@ date: 2025-07-18
 description: "Privacy policy for this blog"
 layout: static-page
 type: page
-draft: true
 _build:
   list: false
 ---

@@ -4,7 +4,6 @@ date: 2025-07-18
 description: "Contact for this blog"
 layout: static-page
 type: contact
-draft: true
 _build:
   list: false
 ---
