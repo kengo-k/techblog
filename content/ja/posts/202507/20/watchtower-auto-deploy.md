@@ -44,7 +44,7 @@ app.listen(port, () => {
 });
 ```
 
-express を使用したシンプルな API サーバー。pacakge.json は下記。
+express を使用したシンプルな API サーバー。package.json は下記。
 
 ```json
 {
@@ -81,7 +81,7 @@ CMD ["npm", "start"]
 
 ## 2. GitHub Actions 設定
 
-GitHub Actions のワークフローを作成して、コードが push されたときに自動でイメージをビルド・プッシュするように設定する。
+GitHub Actions のワークフローを作成して、コードが push されたときに自動でイメージをビルドし GHCR へ push するように設定する。
 
 **.github/workflows/build.yaml** :　ファイル名の部分（build.yaml） は任意です。ディレクトリは固定。
 
@@ -180,8 +180,7 @@ services:
       simple-api-server   # 監視対象コンテナ名
 ```
 
-ポイントは QNAP ホスト上の Docker デーモンを利用するために volumes で Docker ソケットをマウントしているところです。また command では監視対象のコンテナ名を指定しています。
-なお、Container Station 上で GHCR への認証情報を設定しているのに docker-compose.yaml （の watchtower コンテナの設定）でも認証情報を指定しているのが冗長に見えるが、これは
+QNAP ホスト上の Docker デーモンを利用するために volumes で Docker ソケットをマウントしているところがポイント。また command では監視対象のコンテナ名を指定している。なお、Container Station 上で GHCR への認証情報を設定しているのに docker-compose.yaml （の watchtower コンテナの設定）でも認証情報を指定しているのが冗長に見えるが、これは
 
 - Container Station が app コンテナ のイメージを取得する際に認証情報を使用する
 - watchtower コンテナが app コンテナの最新イメージを取得する際に認証情報を使用する
