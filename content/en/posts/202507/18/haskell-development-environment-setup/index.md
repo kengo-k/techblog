@@ -3,6 +3,7 @@ title: "Haskell Development Environment Setup Guide"
 date: 2025-07-18
 tags: ["Haskell"]
 description: "A complete guide to setting up a Haskell development environment from scratch, including development tools, auto-formatting, and pseudo hot-reload functionality."
+keywords: ["Haskell", "development environment"]
 ---
 
 I've always been fascinated by Haskell and functional programming (it's pretty cool, right?), and I actually studied it about 10 years ago but ended up abandoning it halfway through. Now with AI available, I think it's the perfect time to give it another shot. So I'm starting with setting up a development environment and documenting the process.

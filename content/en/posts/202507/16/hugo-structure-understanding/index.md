@@ -3,6 +3,7 @@ title: "Notes on Customizing Hugo Blogs"
 date: 2025-07-16
 tags: ["Hugo"]
 description: "A simple guide to understanding Hugo templates and customizing your blog."
+keywords: ["Hugo", "static site generator", "blog", "customization"]
 ---
 
 I built this blog using Hugo, a static site generator written in Go. If you're building your own blog, you'll naturally want to customize the design to your liking. So I've documented what I learned about Hugo's basic structure as a memo. It might look a bit complex at first, but once you get used to it, it's actually quite simple.
