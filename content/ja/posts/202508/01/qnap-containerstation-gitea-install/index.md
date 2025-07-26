@@ -31,7 +31,7 @@ version: "3.7"
 services:
   gitea:
     image: gitea/gitea:1.21
-    container_name: gitea_web2
+    container_name: gitea_web
     environment:
       - USER_UID=1000
       - USER_GID=1000
@@ -44,7 +44,7 @@ services:
       - GITEA__actions__ENABLED=true
       - GITEA__packages__ENABLED=true
     volumes:
-      - gitea_data2:/data
+      - gitea_data:/data
     networks:
       gitea_qnet:
         ipv4_address: 192.168.1.111
@@ -54,19 +54,19 @@ services:
 
   db:
     image: postgres:15-alpine
-    container_name: gitea_db2
+    container_name: gitea_db
     environment:
       - POSTGRES_USER=gitea
       - POSTGRES_PASSWORD=gitea_password
       - POSTGRES_DB=gitea
     volumes:
-      - postgres_data2:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - internal_network
 
 volumes:
-  gitea_data2:
-  postgres_data2:
+  gitea_data:
+  postgres_data:
 
 networks:
   gitea_qnet:
@@ -118,10 +118,10 @@ version: "3.7"
 services:
   gitea-runner:
     image: gitea/act_runner:latest
-    container_name: gitea_runner2
+    container_name: gitea_runner
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - runner_data2:/data
+      - runner_data:/data
     environment:
       - GITEA_INSTANCE_URL=http://192.168.1.111
       - GITEA_RUNNER_REGISTRATION_TOKEN=SGyMyWwCp0BDvLgJAQL8QtGbvX0CxCb6c6AlWNNd
@@ -131,7 +131,7 @@ services:
     restart: unless-stopped
 
 volumes:
-  runner_data2:
+  runner_data:
 
 networks:
   gitea_runner_qnet:
