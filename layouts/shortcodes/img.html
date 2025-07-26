@@ -1,0 +1,51 @@
+{{- $lang := .Get "lang" | default "" -}}
+{{- $postDir := path.Dir .Page.File.Path -}}
+{{- $fileName := .Get "src" -}}
+
+{{- $image := "" -}}
+{{- if $lang -}}
+  {{- /* 言語指定がある場合：assets/images/ja/posts/... */}}
+  {{- $langPath := printf "images/%s/%s/%s" $lang (strings.TrimPrefix (printf "%s/" .Page.Language.Lang) $postDir) $fileName -}}
+  {{- $image = resources.Get $langPath -}}
+{{- else -}}
+  {{- /* 言語指定なしの場合：assets/images/posts/... (デフォルト) */}}
+  {{- $defaultPath := printf "images/%s/%s" (strings.TrimPrefix (printf "%s/" .Page.Language.Lang) $postDir) $fileName -}}
+  {{- $image = resources.Get $defaultPath -}}
+{{- end -}}
+
+{{- $resize := .Get "resize" -}}
+{{- $alt := .Get "alt" | default "" -}}
+{{- $caption := .Get "caption" | default "" -}}
+
+{{- if $image -}}
+  {{- $webp := "" -}}
+  {{- if $resize -}}
+    {{- $processed := $image.Resize (printf "%sx" $resize) -}}
+    {{- $webp = $processed.Process "webp q5" -}}
+  {{- else -}}
+    {{- $webp = $image.Process "webp q5" -}}
+  {{- end -}}
+  
+  <figure class="img-shortcode{{ if or (.Get "class") (eq (.Get "align") "center") }} 
+             {{- if eq (.Get "align") "center" }}align-center {{ end }}
+             {{- with .Get "class" }}{{ . }}{{- end }}{{ end }}">
+    {{- if .Get "link" -}}
+        <a href="{{ .Get "link" }}"{{ with .Get "target" }} target="{{ . }}"{{ end }}{{ with .Get "rel" }} rel="{{ . }}"{{ end }}>
+    {{- end }}
+    <img loading="lazy" src="{{ $webp.RelPermalink }}"
+         {{- if $alt }} alt="{{ $alt }}"{{ end -}}
+         {{- with .Get "width" }} width="{{ . }}"{{ end -}}
+         {{- with .Get "height" }} height="{{ . }}"{{ end -}}
+    />
+    {{- if .Get "link" }}</a>{{ end -}}
+    {{- if $caption -}}
+        <figcaption>{{ $caption }}</figcaption>
+    {{- end }}
+  </figure>
+{{- else -}}
+  {{- if $lang -}}
+    <p style="color: red;">画像が見つかりません: images/{{ $lang }}/{{ strings.TrimPrefix (printf "%s/" .Page.Language.Lang) $postDir }}/{{ $fileName }}</p>
+  {{- else -}}
+    <p style="color: red;">画像が見つかりません: images/{{ strings.TrimPrefix (printf "%s/" .Page.Language.Lang) $postDir }}/{{ $fileName }}</p>
+  {{- end -}}
+{{- end -}}
