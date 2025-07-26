@@ -12,6 +12,8 @@ draft: true
 
 ゴールは Gitea Actions が動作すること、およびコンテナイメージを Gitea のコンテナレジストリに PUSH できるようにすることとします。
 
+**注意**: 本記事は自宅 QNAP 環境でのローカル運用を前提としています。そのため、簡易性を重視して HTTP 通信を使用していますが、インターネットに公開する場合は必ず HTTPS の設定を行ってください。また、データベースのパスワードは実際の運用ではより強固なパスワードを使用してください。
+
 ## 作業手順
 
 1. Gitea をインストールする
@@ -29,7 +31,7 @@ version: "3.7"
 services:
   gitea:
     image: gitea/gitea:1.21
-    container_name: gitea_web2
+    container_name: gitea_web
     environment:
       - USER_UID=1000
       - USER_GID=1000
@@ -40,8 +42,9 @@ services:
       - GITEA__database__PASSWD=gitea_password
       - GITEA__server__HTTP_PORT=80
       - GITEA__actions__ENABLED=true
-      - GITEA__actions__DEFAULT_ACTIONS_URL=https://gitea.com
       - GITEA__packages__ENABLED=true
+    volumes:
+      - gitea_data:/data
     networks:
       gitea_qnet:
         ipv4_address: 192.168.1.111
@@ -51,13 +54,19 @@ services:
 
   db:
     image: postgres:15-alpine
-    container_name: gitea_db2
+    container_name: gitea_db
     environment:
       - POSTGRES_USER=gitea
       - POSTGRES_PASSWORD=gitea_password
       - POSTGRES_DB=gitea
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - internal_network
+
+volumes:
+  gitea_data:
+  postgres_data:
 
 networks:
   gitea_qnet:
@@ -109,7 +118,7 @@ version: "3.7"
 services:
   gitea-runner:
     image: gitea/act_runner:latest
-    container_name: gitea_runner2
+    container_name: gitea_runner
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
@@ -148,7 +157,7 @@ Gitea のランナー管理画面に新しいランナーが登録されてい�
 
 ソースファイルは下記。
 
-**hello.go**
+**main.go**
 
 ```go
 package main
