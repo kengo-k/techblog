@@ -8,9 +8,9 @@ toc: false
 draft: true
 ---
 
-前回に引き続き Container Station ネタ。今回は Container Station 上に Gitea をインストールしたので、その時の作業記録を残しておく。Gitea は Go 製の Git サーバで非常に軽量なのが特徴らしい。これまでは GitBucket （これは Java 製）を使っていたのだが、Gitea に移行するだけで使用メモリが大幅に削減されること、さらに GitHub Actions 互換のワークフロー（Gitea Actions）を実行できるらしい。ちょうどブログをやり始めたこともあり、記録を残しつつ移行してみることにしました。
+前回に引き続き Container Station ネタです。今回は Container Station 上に Gitea をインストールしたので、その時の作業記録となります。Gitea は Go 製の Git サーバで非常に軽量なのが特徴らしい。これまでは GitBucket （これは Java 製）を使っていましたが、Gitea に移行するだけで使用メモリが大幅に削減されること、さらに GitHub Actions 互換のワークフロー（Gitea Actions）を実行できるとのこと。ちょうどブログをやり始めたこともあり、記録を残しつつ移行してみることにしました。
 
-ゴールは Gitea Actions が動作すること、およびコンテナイメージを Gitea のコンテナレジストリに PUSH できるようにすることとします。
+ゴールは Gitea Actions が動作すること、およびコンテナイメージを Gitea のコンテナレジストリに PUSH できるようにすること、とします。
 
 **注意**: 本記事は自宅 QNAP 環境でのローカル運用を前提としています。そのため、簡易性を重視して HTTP 通信を使用していますが、インターネットに公開する場合は必ず HTTPS の設定を行ってください。また、データベースのパスワードは実際の運用では、より強固なパスワードを使用してください。
 
@@ -31,7 +31,7 @@ version: "3.7"
 services:
   gitea:
     image: gitea/gitea:1.21
-    container_name: gitea_web
+    container_name: gitea_web2
     environment:
       - USER_UID=1000
       - USER_GID=1000
@@ -44,7 +44,7 @@ services:
       - GITEA__actions__ENABLED=true
       - GITEA__packages__ENABLED=true
     volumes:
-      - gitea_data:/data
+      - gitea_data2:/data
     networks:
       gitea_qnet:
         ipv4_address: 192.168.1.111
@@ -54,19 +54,19 @@ services:
 
   db:
     image: postgres:15-alpine
-    container_name: gitea_db
+    container_name: gitea_db2
     environment:
       - POSTGRES_USER=gitea
       - POSTGRES_PASSWORD=gitea_password
       - POSTGRES_DB=gitea
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data2:/var/lib/postgresql/data
     networks:
       - internal_network
 
 volumes:
-  gitea_data:
-  postgres_data:
+  gitea_data2:
+  postgres_data2:
 
 networks:
   gitea_qnet:
@@ -93,17 +93,17 @@ networks:
 
 これを入れておかないと、設定画面等に該当のメニューが表示されず、使うことができない。
 
-次にネットワーク関連の設定については、自宅のネットワーク（192.168.1.0）内の固定 IP を振るための設定（ブリッジ接続）をしている。この設定をしない場合は、QNAP ホストの IP を使ってポートフォワード経由でコンテナにアクセスすることになる。個人的な好みとして、（めんどくさいので）なるべくポート番号を指定したくないし、どのポートが使用中であるかの管理もしたくないので、基本的にブリッジ接続を使用することにしている。
+次にネットワーク関連の設定については、自宅のネットワーク（192.168.1.0）内の固定 IP を振るための設定（ブリッジ接続）をしている。この設定をしない場合は、QNAP ホストの IP を使ってポートフォワード経由でコンテナにアクセスすることになる。個人的な好みとして、（めんどくさいので）なるべくポート番号を指定したくないし、どのポートが使用中であるかの管理もしたくないので、私は基本的にブリッジ接続を使用することにしている。
 
 コンテナ起動後に Web にアクセスすると、インストール画面が表示される。インストール後にユーザー登録をすると、下記画像のような TOP ページが表示されるはずである。
 
 {{< img src="image1.png" quality="5" alt="Giteaの設定画面" >}}
 
-右上のユーザーアイコンをクリックし「設定」メニューをクリックする。
+右上のユーザーアイコンをクリックし「Settings」メニューをクリックする。
 
 {{< img src="image2.png" alt="Giteaの設定画面2" >}}
 
-設定画面では、サイドバーにある「Actions」メニューより「ランナー」をクリックし、右上の「新しいランナーを作成」ボタンをクリックする。
+設定画面では、サイドバーにある「Actions」メニューより「Runners」をクリックし、右上の「Create new Runner」ボタンをクリックする。
 
 {{< img src="image3.png" alt="Giteaの設定画面3" width="300">}}
 
@@ -118,20 +118,20 @@ version: "3.7"
 services:
   gitea-runner:
     image: gitea/act_runner:latest
-    container_name: gitea_runner
+    container_name: gitea_runner2
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - runner_data:/data
+      - runner_data2:/data
     environment:
       - GITEA_INSTANCE_URL=http://192.168.1.111
-      - GITEA_RUNNER_REGISTRATION_TOKEN=Giteaの設定画面で取得した登録用トークン
+      - GITEA_RUNNER_REGISTRATION_TOKEN=SGyMyWwCp0BDvLgJAQL8QtGbvX0CxCb6c6AlWNNd
     networks:
       gitea_runner_qnet:
         ipv4_address: 192.168.1.112
     restart: unless-stopped
 
 volumes:
-  runner_data:
+  runner_data2:
 
 networks:
   gitea_runner_qnet:
@@ -149,7 +149,7 @@ networks:
 
 `GITEA_RUNNER_REGISTRATION_TOKEN`に先ほど Gitea の設定画面で取得したトークンを設定すること。docker.sock をマウントしているのは Actions 内で docker コマンドを使うことを想定しているため。
 
-**注意**: トークンを含んだ docker-compose.yaml ファイルを GitHub 等にコミットしないよう注意すること。トークンは機密情報であるため、必ず環境変数ファイル（.env）やシークレット管理機能を使用して安全に管理する。
+**注意**: トークンを含んだ docker-compose.yaml ファイルを GitHub 等にコミットしないよう注意すること。
 
 コンテナが起動し、しばらく待つと下記のような表示になっているはずである。
 
@@ -239,26 +239,30 @@ jobs:
 
 Gitea のレジストリにログインする際は、パッケージへの書き込み権限を持つトークンが必要である。デフォルトの`GITEA_TOKEN`は書き込み権限がないため、新しいトークンを作成する必要がある。
 
-トークンを作成するには、下記画像にあるアカウントの設定画面より「アプリケーション」設定を表示し、アクセストークンの作成を行う。
+トークンを作成するには、下記画像にあるアカウントの設定画面より「Applications」設定を表示し、アクセストークンの作成を行う。
 
 {{< img src="image5.png" alt="Giteaの設定画面2" >}}
 
-任意のトークン名を設定し、画面をさらに下にスクロールしていくと`packages`の項目が見つかるはずである。
+ここでは任意のトークン名を設定し、適切な権限を設定する。「Generate Token」ボタンの上にある **Select permissions** をクリックすると権限の一覧が表示される。一覧を下にスクロール指定していくと　**package** の項目が見つかるはずである。
 
 {{< img src="image6.png" alt="Giteaの設定画面2" width="300">}}
 
-「読み取りと書き込み」を選択し、「トークンの生成」をクリックするとトークンが作成される。このトークンの値は忘れずにコピーしておくこと。最後に、このトークンの値を持つシークレット変数を作成しよう。
+「Read and Write」を選択し、「Generate Token」をクリックするとトークンが作成される。このトークンの値は忘れずにコピーしておくこと。最後に、このトークンの値を持つシークレット変数を作成しよう。
 
-シークレット変数を作成するには、アカウントまたはリポジトリの設定画面の「Actions」→「シークレット」を表示する。
+シークレット変数を作成するには、アカウントまたはリポジトリの設定画面の「Actions」→「Secrets」を表示する。
 
 {{< img src="image7.png" alt="Giteaの設定画面2" >}}
 
-シークレット管理画面が表示されるので、「シークレットを追加」ボタンをクリックする。
+シークレット管理画面が表示されるので、「Add Secret」ボタンをクリックする。
 
 {{< img src="image8.png" alt="Giteaの設定画面2" >}}
 
-ダイアログが表示されるので、任意のシークレット名（docker-compose.yaml で指定した名前）と、先ほど生成したトークンを貼り付ければ完了。コードを PUSH し、Actions が完了するのを待とう。
+ダイアログが表示されるので、任意のシークレット名（docker-compose.yaml で指定した名前）と、先ほど生成したトークンを貼り付ければ完了。ひと通りコードの作成が終了したので、これまで作成したコードを PUSH しよう。まずは Gitea にテスト用のリポジトリ（ここでは test_repo とした）を作成する。さらにリポジトリの設定画面で Actions の有効化を行う。
 
 {{< img src="image9.png" alt="Giteaの設定画面2" >}}
 
-上記画像のようにパッケージが作成されていれば成功です。
+デフォルトでは上記の「Actions」はチェックが OFF になっているので ON にする。これで準備が完了したので、リポジトリにコードを PUSH して Actions が正しく動作するかどうかを確認しよう。
+
+{{< img src="image10.png" alt="Giteaの設定画面2" >}}
+
+上記画像のようにパッケージが作成されていれば成功である。
