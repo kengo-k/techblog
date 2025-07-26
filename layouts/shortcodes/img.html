@@ -1,4 +1,18 @@
-{{- $image := .Page.Resources.GetMatch (.Get "src") -}}
+{{- $lang := .Get "lang" | default "" -}}
+{{- $postDir := path.Dir .Page.File.Path -}}
+{{- $fileName := .Get "src" -}}
+
+{{- $image := "" -}}
+{{- if $lang -}}
+  {{- /* 言語指定がある場合：assets/images/ja/posts/... */}}
+  {{- $langPath := printf "images/%s/%s/%s" $lang (strings.TrimPrefix (printf "%s/" .Page.Language.Lang) $postDir) $fileName -}}
+  {{- $image = resources.Get $langPath -}}
+{{- else -}}
+  {{- /* 言語指定なしの場合：assets/images/posts/... (デフォルト) */}}
+  {{- $defaultPath := printf "images/%s/%s" (strings.TrimPrefix (printf "%s/" .Page.Language.Lang) $postDir) $fileName -}}
+  {{- $image = resources.Get $defaultPath -}}
+{{- end -}}
+
 {{- $resize := .Get "resize" -}}
 {{- $alt := .Get "alt" | default "" -}}
 {{- $caption := .Get "caption" | default "" -}}
@@ -29,5 +43,9 @@
     {{- end }}
   </figure>
 {{- else -}}
-  <p style="color: red;">画像が見つかりません: {{ .Get "src" }}</p>
-{{- end -}} 
+  {{- if $lang -}}
+    <p style="color: red;">画像が見つかりません: images/{{ $lang }}/{{ strings.TrimPrefix (printf "%s/" .Page.Language.Lang) $postDir }}/{{ $fileName }}</p>
+  {{- else -}}
+    <p style="color: red;">画像が見つかりません: images/{{ strings.TrimPrefix (printf "%s/" .Page.Language.Lang) $postDir }}/{{ $fileName }}</p>
+  {{- end -}}
+{{- end -}}
