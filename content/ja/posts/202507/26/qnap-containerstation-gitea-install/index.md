@@ -1,11 +1,10 @@
 ---
 title: "Container StationにGiteaをインストールする"
-date: 2025-08-01
+date: 2025-07-26
 tags: ["QNAP"]
 description: "QNAPのContainer StationにGiteaをインストールし、自宅Gitサーバーを構築した時のメモです"
 keywords: ["QNAP", "Gitea", "Container Station", "Git", "自宅サーバー"]
 toc: false
-draft: true
 ---
 
 前回に引き続き Container Station ネタです。今回は Container Station 上に Gitea をインストールしたので、その時の作業記録となります。Gitea は Go 製の Git サーバで非常に軽量なのが特徴らしい。これまでは GitBucket （これは Java 製）を使っていましたが、Gitea に移行するだけで使用メモリが大幅に削減されること、さらに GitHub Actions 互換のワークフロー（Gitea Actions）を実行できるとのこと。ちょうどブログをやり始めたこともあり、記録を残しつつ移行してみることにしました。
