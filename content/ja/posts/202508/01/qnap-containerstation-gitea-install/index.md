@@ -8,7 +8,7 @@ toc: false
 draft: true
 ---
 
-前回に引き続き Container Station ネタ。今回は Container Station 上に Gitea をインストールしたので、その時の作業記録を残しておく。Gitea は Go 製の Git サーバで非常に軽量なのが特徴らしい。これまでは Git Bucket （これは Java 製）を使っていたのだが、Gitea に移行するだけで使用メモリが大幅に削減されること、さらに GitHub Actions 互換のワークフロー（Gitea Actions）を実行できるらしい。ちょうどブログをやり始めたこともあり、記録を残しつつ移行してみることにしました。
+前回に引き続き Container Station ネタ。今回は Container Station 上に Gitea をインストールしたので、その時の作業記録を残しておく。Gitea は Go 製の Git サーバで非常に軽量なのが特徴らしい。これまでは GitBucket （これは Java 製）を使っていたのだが、Gitea に移行するだけで使用メモリが大幅に削減されること、さらに GitHub Actions 互換のワークフロー（Gitea Actions）を実行できるらしい。ちょうどブログをやり始めたこともあり、記録を残しつつ移行してみることにしました。
 
 ゴールは Gitea Actions が動作すること、およびコンテナイメージを Gitea のコンテナレジストリに PUSH できるようにすることとします。
 
@@ -121,6 +121,7 @@ services:
     container_name: gitea_runner
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - runner_data:/data
     environment:
       - GITEA_INSTANCE_URL=http://192.168.1.111
       - GITEA_RUNNER_REGISTRATION_TOKEN=Giteaの設定画面で取得した登録用トークン
@@ -128,6 +129,9 @@ services:
       gitea_runner_qnet:
         ipv4_address: 192.168.1.112
     restart: unless-stopped
+
+volumes:
+  runner_data:
 
 networks:
   gitea_runner_qnet:
@@ -231,9 +235,7 @@ jobs:
             192.168.1.111/${{ gitea.repository }}:${{ gitea.sha }}
 ```
 
-Gitea のレジストリにログインする際は、パッケージへの書き込み権限を持ったトークン（上の例では`CREATE_PACKAGES`変数を使用している箇所）を指定する必要があるので注意。
-
-GitHub ではデフォルトのトークンである`GITHUB_TOKEN`がパッケージの書き込み権限を持っているが、Gitea の場合はデフォルトのトークンである`GITEA_TOKEN`は書き込み権限を持っていないため、新しいトークンを作成する必要がある。
+Gitea のレジストリにログインするには、パッケージへの書き込み権限を持つトークンが必要です。デフォルトの`GITEA_TOKEN`は書き込み権限がないため、新しいトークンを作成してください。
 
 トークンを作成するには、下記画像にあるアカウントの設定画面より「アプリケーション」設定を表示し、アクセストークンの作成を行う。
 
@@ -243,7 +245,7 @@ GitHub ではデフォルトのトークンである`GITHUB_TOKEN`がパッケ�
 
 {{< img src="image6.png" alt="Giteaの設定画面2" width="300">}}
 
-読み取りと書き込みを選択し、「トークンの生成」をクリックするとトークンが作成される。このトークンの値は忘れずにコピーしておくこと。最後に、このトークンの値を持つシークレット変数しよう。
+読み取りと書き込みを選択し、「トークンの生成」をクリックするとトークンが作成される。このトークンの値は忘れずにコピーしておくこと。最後に、このトークンの値を持つシークレット変数を作成しよう。
 
 シークレット変数を作成するには、アカウントまたはリポジトリの設定画面の「Actions」→「シークレット」を表示する。
 
