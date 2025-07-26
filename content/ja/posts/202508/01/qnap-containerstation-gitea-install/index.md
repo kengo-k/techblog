@@ -124,7 +124,7 @@ services:
       - runner_data:/data
     environment:
       - GITEA_INSTANCE_URL=http://192.168.1.111
-      - GITEA_RUNNER_REGISTRATION_TOKEN=SGyMyWwCp0BDvLgJAQL8QtGbvX0CxCb6c6AlWNNd
+      - GITEA_RUNNER_REGISTRATION_TOKEN=Giteaの設定画面で取得したトークン
     networks:
       gitea_runner_qnet:
         ipv4_address: 192.168.1.112
