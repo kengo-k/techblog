@@ -117,7 +117,7 @@ networks:
 version: "3.7"
 services:
   gitea-runner:
-    image: gitea/act_runner:latest
+    image: gitea/act_runner:0.2.12
     container_name: gitea_runner
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
